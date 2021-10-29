@@ -2,6 +2,7 @@ package io.github.superjoy0502.daahsedb;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.util.concurrent.Executors;
@@ -22,6 +23,8 @@ public class Bot {
                 .addEventListeners(verification)
                 .build()
                 .awaitReady();
+
+        api.getPresence().setActivity(Activity.watching("Joy playing after he made me stable"));
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
