@@ -29,7 +29,7 @@ public class Verification extends ListenerAdapter {
     public HashMap<Long, String> gradeMap = new HashMap<>();
     public HashMap<Long, String> epsbIdMap = new HashMap<>();
     public HashMap<Long, Boolean> verifyMessageCheckedMap = new HashMap<>();
-    int verificationProgress = 0;
+    public HashMap<Long, Integer> verificationProgressMap = new HashMap<>();
     JDA api;
 
     public void sendUserDirectWelcomeMessage(User user, JDA api) {
@@ -37,6 +37,7 @@ public class Verification extends ListenerAdapter {
         long id = user.getIdLong();
 
         userMap.put(id, user);
+        verificationProgressMap.put(id, 0);
 
         this.api = api;
 
@@ -63,7 +64,7 @@ public class Verification extends ListenerAdapter {
 
         User user = userMap.get(id);
 
-        switch (verificationProgress) {
+        switch (verificationProgressMap.get(id)) {
 
             case 0: {
 
@@ -71,7 +72,7 @@ public class Verification extends ListenerAdapter {
                         .queue(channel -> {
 
                             channel.sendMessage("Great!");
-                            verificationProgress++;
+                            verificationProgressMap.put(id, 1);
                             verificationProcess(id);
 
                         });
@@ -92,7 +93,7 @@ public class Verification extends ListenerAdapter {
 
                 api.addEventListener(new GetUserInput(this, user, api));
 
-                verificationProgress++;
+                verificationProgressMap.put(id, 2);
                 break;
 
             }
@@ -110,7 +111,7 @@ public class Verification extends ListenerAdapter {
 
                         });
 
-                verificationProgress++;
+                verificationProgressMap.put(id, 3);
                 break;
 
             }
@@ -128,7 +129,7 @@ public class Verification extends ListenerAdapter {
 
                         });
 
-                verificationProgress++;
+                verificationProgressMap.put(id, 4);
                 break;
 
             }
@@ -167,13 +168,13 @@ public class Verification extends ListenerAdapter {
 
                         });
 
-                verificationProgress++;
+                verificationProgressMap.put(id, 0);
                 break;
 
             }
 
             default:
-                throw new IllegalStateException("Unexpected value: " + verificationProgress);
+                throw new IllegalStateException("Unexpected value: " + verificationProgressMap.get(id));
 
         }
 
@@ -216,7 +217,7 @@ public class Verification extends ListenerAdapter {
             } else if (reactionCodepoints.equalsIgnoreCase(anticlockwise)) {
 
                 confirmMessageIdMap.put(id, null);
-                verificationProgress = 1;
+                verificationProgressMap.put(id, 1);
                 verificationProcess(id);
 
             }
