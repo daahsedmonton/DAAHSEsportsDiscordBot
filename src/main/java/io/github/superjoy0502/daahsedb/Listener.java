@@ -52,12 +52,7 @@ public class Listener extends ListenerAdapter {
 
         if (verification.verifyMessageIdMap.containsValue(eventMessageId)) {
 
-            if (verification.verifyMessageCheckedMap.get(eventMessageId)) {
-
-                System.out.println("HERE");
-                return;
-
-            }
+            if (verification.verifyMessageCheckedMap.get(eventMessageId)) return;
 
             User user = event.getUser();
             long verificationUserId = getKey(verification.verifyMessageIdMap, eventMessageId);
@@ -76,9 +71,10 @@ public class Listener extends ListenerAdapter {
                             eb.setDescription("This verification request has been confirmed by: " + user.getAsMention());
                             eb.setColor(new Color(12, 60, 105));
 
-                            eb.addField("User", verificationUser.getAsMention(), true);
+                            eb.addField("User", verificationUser.getAsMention(), false);
                             eb.addField("Name", verification.nameMap.get(verificationUserId), true);
                             eb.addField("Grade", verification.gradeMap.get(verificationUserId), true);
+                            eb.addField("EPSB ID", verification.epsbIdMap.get(verificationUserId), true);
 
                             eb.setFooter("Automated message for user verification");
                             eb.setTimestamp(Instant.now());
@@ -113,9 +109,10 @@ public class Listener extends ListenerAdapter {
                             eb.setDescription("This verification request has been declined by: " + user.getAsMention());
                             eb.setColor(new Color(12, 60, 105));
 
-                            eb.addField("User", verificationUser.getAsMention(), true);
+                            eb.addField("User", verificationUser.getAsMention(), false);
                             eb.addField("Name", verification.nameMap.get(verificationUserId), true);
                             eb.addField("Grade", verification.gradeMap.get(verificationUserId), true);
+                            eb.addField("EPSB ID", verification.epsbIdMap.get(verificationUserId), true);
 
                             eb.setFooter("Automated message for user verification");
                             eb.setTimestamp(Instant.now());

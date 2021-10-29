@@ -27,8 +27,9 @@ public class Verification extends ListenerAdapter {
     public HashMap<Long, String> responseContentMap = new HashMap<>();
     public HashMap<Long, String> nameMap = new HashMap<>();
     public HashMap<Long, String> gradeMap = new HashMap<>();
+    public HashMap<Long, String> epsbIdMap = new HashMap<>();
     public HashMap<Long, Boolean> verifyMessageCheckedMap = new HashMap<>();
-    int verificationProcess = 0;
+    int verificationProgress = 0;
     JDA api;
 
     public void sendUserDirectWelcomeMessage(User user, JDA api) {
@@ -46,7 +47,7 @@ public class Verification extends ListenerAdapter {
                                 + "To get you started, we have to verify your identity first.\n"
                                 + "Please understand that these procedures are being carried out for the student safety.\n"
                                 + "Thank you for your cooperation in advance.\n"
-                                + "Should we continue?"
+                                + "Shall we continue?"
                 ))
                 .queue(message -> {
 
@@ -58,93 +59,123 @@ public class Verification extends ListenerAdapter {
 
     }
 
-    public void sendUserDirectVerificationMessage(long id) {
+    public void verificationProcess(long id) {
 
         User user = userMap.get(id);
 
-        user.openPrivateChannel()
-                .queue(channel -> {
+        switch (verificationProgress) {
 
-                    channel.sendMessage("Great!");
-                    startVerificationProcess(id);
+            case 0: {
 
-                });
+                user.openPrivateChannel()
+                        .queue(channel -> {
 
-    }
+                            channel.sendMessage("Great!");
+                            verificationProgress++;
+                            verificationProcess(id);
 
-    public void startVerificationProcess(long id) {
+                        });
 
-        verificationProcess = 1;
+                break;
 
-        User user = userMap.get(id);
+            }
 
-        user.openPrivateChannel()
-                .queue(channel -> {
+            case 1: {
 
-                    channel.sendMessage("Please enter your name: " +
-                            "(You can redo this process if you have entered inaccurate information at the end!)").queue();
+                user.openPrivateChannel()
+                        .queue(channel -> {
 
-                });
+                            channel.sendMessage("Please enter your full name: " +
+                                    "(You can redo this process if you have entered inaccurate information at the end!)").queue();
 
-        api.addEventListener(new GetUserInput(this, user, api, verificationProcess));
+                        });
 
-    }
+                api.addEventListener(new GetUserInput(this, user, api));
 
-    public void secondVerificationProcess(long id) {
+                verificationProgress++;
+                break;
 
-        verificationProcess = 2;
+            }
 
-        User user = userMap.get(id);
+            case 2: {
 
-        nameMap.put(id, responseContentMap.get(id));
+                nameMap.put(id, responseContentMap.get(id));
 
-        user.openPrivateChannel()
-                .queue(channel -> {
+                user.openPrivateChannel()
+                        .queue(channel -> {
 
-                    channel.sendMessage("Please enter your grade: ").queue();
+                            channel.sendMessage("Please enter your grade: ").queue();
 
-                    api.addEventListener(new GetUserInput(this, user, api, verificationProcess));
+                            api.addEventListener(new GetUserInput(this, user, api));
 
-                });
+                        });
 
-    }
+                verificationProgress++;
+                break;
 
-    public void thirdVerificationProcess(long id) {
+            }
 
-        verificationProcess = 3;
+            case 3: {
 
-        User user = userMap.get(id);
+                gradeMap.put(id, responseContentMap.get(id));
 
-        gradeMap.put(id, responseContentMap.get(id));
+                user.openPrivateChannel()
+                        .queue(channel -> {
 
-        user.openPrivateChannel()
-                .queue(channel -> {
+                            channel.sendMessage("Please enter your EPSB ID: ").queue();
 
-                    channel.sendMessage("Please check if the following information is correct:").queue();
+                            api.addEventListener(new GetUserInput(this, user, api));
 
-                    EmbedBuilder eb = new EmbedBuilder();
+                        });
 
-                    eb.setAuthor(user.getName(), null, user.getEffectiveAvatarUrl());
-                    eb.setTitle(user.getName(), null);
-                    eb.setDescription("Click :white_check_mark: to confirm, :arrows_counterclockwise: to re-enter your information.");
-                    eb.setColor(new Color(12, 60, 105));
+                verificationProgress++;
+                break;
 
-                    eb.addField("Name", nameMap.get(id), true);
-                    eb.addField("Grade", gradeMap.get(id), true);
+            }
 
-                    eb.setFooter("Automated message for user verification");
-                    eb.setTimestamp(Instant.now());
+            case 4: {
 
-                    channel.sendMessage(eb.build()).queue(message -> {
+                epsbIdMap.put(id, responseContentMap.get(id));
 
-                        message.addReaction(checkmark).queue();
-                        message.addReaction(anticlockwise).queue();
-                        confirmMessageIdMap.put(id, message.getIdLong());
-                        confirmedMap.put(id, false);
+                user.openPrivateChannel()
+                        .queue(channel -> {
 
-                    });
+                            channel.sendMessage("Please check if the following information is correct:").queue();
 
-                });
+                            EmbedBuilder eb = new EmbedBuilder();
+
+                            eb.setAuthor(user.getName(), null, user.getEffectiveAvatarUrl());
+                            eb.setTitle(user.getName(), null);
+                            eb.setDescription("Click :white_check_mark: to confirm, :arrows_counterclockwise: to re-enter your information.");
+                            eb.setColor(new Color(12, 60, 105));
+
+                            eb.addField("Name", nameMap.get(id), true);
+                            eb.addField("Grade", gradeMap.get(id), true);
+                            eb.addField("EPSB ID", epsbIdMap.get(id), true);
+
+                            eb.setFooter("Automated message for user verification");
+                            eb.setTimestamp(Instant.now());
+
+                            channel.sendMessage(eb.build()).queue(message -> {
+
+                                message.addReaction(checkmark).queue();
+                                message.addReaction(anticlockwise).queue();
+                                confirmMessageIdMap.put(id, message.getIdLong());
+                                confirmedMap.put(id, false);
+
+                            });
+
+                        });
+
+                verificationProgress++;
+                break;
+
+            }
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + verificationProgress);
+
+        }
 
     }
 
@@ -163,7 +194,7 @@ public class Verification extends ListenerAdapter {
             if (reactionCodepoints.equals(checkmark)) {
 
                 verificationAgreedMap.put(id, true);
-                sendUserDirectVerificationMessage(id);
+                verificationProcess(id);
 
             }
 
@@ -185,7 +216,8 @@ public class Verification extends ListenerAdapter {
             } else if (reactionCodepoints.equalsIgnoreCase(anticlockwise)) {
 
                 confirmMessageIdMap.put(id, null);
-                startVerificationProcess(id);
+                verificationProgress = 1;
+                verificationProcess(id);
 
             }
 
@@ -204,9 +236,10 @@ public class Verification extends ListenerAdapter {
         eb.setDescription("Click :white_check_mark: to verify, :no_entry: to decline user.");
         eb.setColor(new Color(12, 60, 105));
 
-        eb.addField("User", user.getAsMention(), true);
+        eb.addField("User", user.getAsMention(), false);
         eb.addField("Name", nameMap.get(id), true);
         eb.addField("Grade", gradeMap.get(id), true);
+        eb.addField("EPSB ID", epsbIdMap.get(id), true);
 
         eb.setFooter("Automated message for user verification");
         eb.setTimestamp(Instant.now());
@@ -230,14 +263,12 @@ class GetUserInput extends ListenerAdapter {
     final long userId;
     Verification verification;
     JDA api;
-    int verificationProcess;
 
-    public GetUserInput(Verification verification, User user, JDA api, int verificationProcess) {
+    public GetUserInput(Verification verification, User user, JDA api) {
 
         this.verification = verification;
         this.userId = user.getIdLong();
         this.api = api;
-        this.verificationProcess = verificationProcess;
 
     }
 
@@ -249,18 +280,7 @@ class GetUserInput extends ListenerAdapter {
         if (event.getAuthor().getIdLong() == userId) {
 
             verification.responseContentMap.put(userId, event.getMessage().getContentRaw());
-            switch (verificationProcess) {
-
-                case 1:
-                    verification.secondVerificationProcess(userId);
-                    break;
-                case 2:
-                    verification.thirdVerificationProcess(userId);
-                    break;
-                default:
-                    throw new IndexOutOfBoundsException();
-
-            }
+            verification.verificationProcess(userId);
 
         }
 
