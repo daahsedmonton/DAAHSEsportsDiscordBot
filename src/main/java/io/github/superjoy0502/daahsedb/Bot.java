@@ -24,7 +24,7 @@ public class Bot {
                 .build()
                 .awaitReady();
 
-        api.getPresence().setActivity(Activity.watching("Joy playing after he made me stable"));
+        api.getPresence().setActivity(Activity.watching("Joy playing after he made me stable (version 0.1.0)"));
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
