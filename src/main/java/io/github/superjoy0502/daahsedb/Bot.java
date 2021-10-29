@@ -25,8 +25,10 @@ public class Bot {
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
+
             System.out.println("Currently used memory: "
                     + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576) + "MB");
+
         };
         executorService.scheduleWithFixedDelay(task, 0, 1, TimeUnit.SECONDS);
 
