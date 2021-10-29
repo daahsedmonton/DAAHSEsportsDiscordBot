@@ -27,6 +27,7 @@ public class Listener extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent event) {
 
         System.out.println("Bot Ready!");
+
         api = event.getJDA();
 
         verificationChannel = event.getJDA().getTextChannelById(channelId);
@@ -52,8 +53,10 @@ public class Listener extends ListenerAdapter {
         if (verification.verifyMessageIdMap.containsValue(eventMessageId)) {
 
             if (verification.verifyMessageCheckedMap.get(eventMessageId)) {
+
                 System.out.println("HERE");
                 return;
+
             }
 
             User user = event.getUser();
@@ -84,9 +87,11 @@ public class Listener extends ListenerAdapter {
 
                             verificationUser.openPrivateChannel()
                                     .queue(channel -> {
+
                                         channel.sendMessage("Thank you for waiting.\n" +
                                                 "You are verified to use the DAAHS Esports Discord Server.\n" +
                                                 "Have fun! :smile: ").queue();
+
                                     });
 
                             event.getGuild().addRoleToMember(verificationUserId, api.getRoleById(verifiedRole)).queue();
@@ -119,12 +124,15 @@ public class Listener extends ListenerAdapter {
 
                             verificationUser.openPrivateChannel()
                                     .queue(channel -> {
+
                                         channel.sendMessage("Thank you for waiting.\n" +
                                                 "Your verification request has been declined.\n" +
                                                 "You can rejoin the server and apply again.\n" +
                                                 "If you have any objections to this decision, " +
                                                 "please talk in the \"#help\" channel in the server").queue();
+
                                     });
+
                         }
                 );
 
@@ -140,12 +148,15 @@ public class Listener extends ListenerAdapter {
     }
 
     public <K, V> K getKey(Map<K, V> map, V value) {
+
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (entry.getValue().equals(value)) {
-                return entry.getKey();
-            }
+
+            if (entry.getValue().equals(value)) return entry.getKey();
+
         }
+
         return null;
+
     }
 
 }

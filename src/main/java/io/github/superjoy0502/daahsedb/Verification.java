@@ -49,9 +49,11 @@ public class Verification extends ListenerAdapter {
                                 + "Should we continue?"
                 ))
                 .queue(message -> {
+
                     message.addReaction(checkmark).queue();
                     welcomeMessageIdMap.put(id, message.getIdLong());
                     verificationAgreedMap.put(id, false);
+
                 });
 
     }
@@ -62,8 +64,10 @@ public class Verification extends ListenerAdapter {
 
         user.openPrivateChannel()
                 .queue(channel -> {
+
                     channel.sendMessage("Great!");
                     startVerificationProcess(id);
+
                 });
 
     }
@@ -76,8 +80,10 @@ public class Verification extends ListenerAdapter {
 
         user.openPrivateChannel()
                 .queue(channel -> {
+
                     channel.sendMessage("Please enter your name: " +
                             "(You can redo this process if you have entered inaccurate information at the end!)").queue();
+
                 });
 
         api.addEventListener(new GetUserInput(this, user, api, verificationProcess));
@@ -94,9 +100,11 @@ public class Verification extends ListenerAdapter {
 
         user.openPrivateChannel()
                 .queue(channel -> {
+
                     channel.sendMessage("Please enter your grade: ").queue();
 
                     api.addEventListener(new GetUserInput(this, user, api, verificationProcess));
+
                 });
 
     }
@@ -111,6 +119,7 @@ public class Verification extends ListenerAdapter {
 
         user.openPrivateChannel()
                 .queue(channel -> {
+
                     channel.sendMessage("Please check if the following information is correct:").queue();
 
                     EmbedBuilder eb = new EmbedBuilder();
@@ -127,14 +136,15 @@ public class Verification extends ListenerAdapter {
                     eb.setTimestamp(Instant.now());
 
                     channel.sendMessage(eb.build()).queue(message -> {
+
                         message.addReaction(checkmark).queue();
                         message.addReaction(anticlockwise).queue();
                         confirmMessageIdMap.put(id, message.getIdLong());
                         confirmedMap.put(id, false);
+
                     });
 
                 });
-
 
     }
 
@@ -165,9 +175,11 @@ public class Verification extends ListenerAdapter {
                 confirmedMap.put(id, true);
                 event.getUser().openPrivateChannel()
                         .queue(channel -> {
+
                             channel.sendMessage("Thank you for your cooperation.\n" +
                                     "Verification may take some time.\n" +
                                     "Please wait with patience.").queue();
+
                         });
 
             } else if (reactionCodepoints.equalsIgnoreCase(anticlockwise)) {
@@ -201,10 +213,12 @@ public class Verification extends ListenerAdapter {
 
         api.getTextChannelById(channelId).sendMessage(
                 eb.build()).queue(message -> {
+
             message.addReaction(checkmark).queue();
             message.addReaction(noentry).queue();
             verifyMessageIdMap.put(id, message.getIdLong());
             verifyMessageCheckedMap.put(message.getIdLong(), false);
+
         });
 
     }
@@ -235,12 +249,17 @@ class GetUserInput extends ListenerAdapter {
         if (event.getAuthor().getIdLong() == userId) {
 
             verification.responseContentMap.put(userId, event.getMessage().getContentRaw());
-            if (verificationProcess == 1) {
-                verification.secondVerificationProcess(userId);
-            } else if (verificationProcess == 2) {
-                verification.thirdVerificationProcess(userId);
-            } else {
-                throw new IndexOutOfBoundsException();
+            switch (verificationProcess) {
+
+                case 1:
+                    verification.secondVerificationProcess(userId);
+                    break;
+                case 2:
+                    verification.thirdVerificationProcess(userId);
+                    break;
+                default:
+                    throw new IndexOutOfBoundsException();
+
             }
 
         }
