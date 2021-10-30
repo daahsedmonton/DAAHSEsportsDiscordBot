@@ -17,7 +17,10 @@ public class Verification extends ListenerAdapter {
     public final String checkmark = "U+2705";
     public final String noentry = "U+26D4";
     public final String anticlockwise = "U+1F504";
-    final Long channelId = 903477388992725004L;
+    public final long channelId = 903477388992725004L;
+    public final long teacherRole = 902691576105553962L;
+    public final long gameLeaderRole = 902692806479446066L;
+    public final long eventCoordinatorRole = 902693703699795978L;
     public HashMap<Long, User> userMap = new HashMap<>();
     public HashMap<Long, Long> welcomeMessageIdMap = new HashMap<>();
     public HashMap<Long, Long> confirmMessageIdMap = new HashMap<>();
@@ -246,7 +249,11 @@ public class Verification extends ListenerAdapter {
         eb.setTimestamp(Instant.now());
 
         api.getTextChannelById(channelId).sendMessage(
-                eb.build()).queue(message -> {
+                api.getRoleById(teacherRole).getAsMention()
+                        + api.getRoleById(gameLeaderRole).getAsMention()
+                        + api.getRoleById(eventCoordinatorRole).getAsMention()
+        ).queue();
+        api.getTextChannelById(channelId).sendMessage(eb.build()).queue(message -> {
 
             message.addReaction(checkmark).queue();
             message.addReaction(noentry).queue();
