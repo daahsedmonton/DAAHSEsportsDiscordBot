@@ -15,16 +15,20 @@ public class Bot {
 
         Listener listener = new Listener();
         Verification verification = listener.verification;
+        long guildId = 902691576105553961L;
 
-        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBKey"))
+        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBCKey"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
                 .addEventListeners(listener)
                 .addEventListeners(verification)
+                .addEventListeners(new PartyMakerListener())
                 .build()
                 .awaitReady();
 
-        api.getPresence().setActivity(Activity.watching("Joy is playing games rn (version 0.1.1)"));
+        api.getPresence().setActivity(Activity.playing("with Joy (Canary)"));
+
+        PartyMaker partyMaker = new PartyMaker(api.getGuildById(guildId));
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {

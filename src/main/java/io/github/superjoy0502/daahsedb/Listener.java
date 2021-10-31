@@ -23,7 +23,8 @@ public class Listener extends ListenerAdapter {
     TextChannel verificationChannel;
     JDA api;
 
-    @Override
+    // Canary OFF
+    /*@Override
     public void onReady(@NotNull ReadyEvent event) {
 
         System.out.println("Bot Ready!");
@@ -33,16 +34,18 @@ public class Listener extends ListenerAdapter {
         verificationChannel = event.getJDA().getTextChannelById(channelId);
         verificationChannel.sendMessage("Bot is up!").queue();
 
-    }
+    }*/
 
-    @Override
+    // Canary OFF
+    /*@Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
         verification.sendUserDirectWelcomeMessage(event.getUser(), api);
 
-    }
+    }*/
 
-    @Override
+    // Canary OFF
+    /*@Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
 
         if (event.getUser().isBot()) return;
@@ -142,7 +145,7 @@ public class Listener extends ListenerAdapter {
 
         }
 
-    }
+    }*/
 
     public <K, V> K getKey(Map<K, V> map, V value) {
 

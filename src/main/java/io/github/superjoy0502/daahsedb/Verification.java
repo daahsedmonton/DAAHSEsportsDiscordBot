@@ -183,7 +183,8 @@ public class Verification extends ListenerAdapter {
 
     }
 
-    @Override
+    // Canary OFF
+    /*@Override
     public void onPrivateMessageReactionAdd(@NotNull PrivateMessageReactionAddEvent event) {
 
         if (event.getUser().isBot()) return;
@@ -227,7 +228,7 @@ public class Verification extends ListenerAdapter {
 
         }
 
-    }
+    }*/
 
     public void sendUserRequestEmbed(long id) {
 
@@ -280,7 +281,8 @@ class GetUserInput extends ListenerAdapter {
 
     }
 
-    @Override
+    // Canary OFF
+    /*@Override
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
 
         if (event.getAuthor().isBot()) return;
@@ -294,6 +296,6 @@ class GetUserInput extends ListenerAdapter {
 
         api.removeEventListener(this);
 
-    }
+    }*/
 
 }
