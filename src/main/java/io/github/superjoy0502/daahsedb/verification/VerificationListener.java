@@ -1,5 +1,6 @@
-package io.github.superjoy0502.daahsedb;
+package io.github.superjoy0502.daahsedb.verification;
 
+import io.github.superjoy0502.daahsedb.verification.Verification;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -14,7 +15,7 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.Map;
 
-public class Listener extends ListenerAdapter {
+public class VerificationListener extends ListenerAdapter {
 
     boolean isCanary;
 
@@ -24,7 +25,7 @@ public class Listener extends ListenerAdapter {
     TextChannel verificationChannel;
     JDA api;
 
-    public Listener(boolean isCanary) {
+    public VerificationListener(boolean isCanary) {
 
         this.isCanary = isCanary;
 

@@ -1,5 +1,7 @@
 package io.github.superjoy0502.daahsedb;
 
+import io.github.superjoy0502.daahsedb.verification.Verification;
+import io.github.superjoy0502.daahsedb.verification.VerificationListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -15,14 +17,14 @@ public class Bot {
 
         boolean isCanary = true;
 
-        Listener listener = new Listener(isCanary);
-        Verification verification = listener.verification;
+        VerificationListener verificationListener = new VerificationListener(isCanary);
+        Verification verification = verificationListener.verification;
         long guildId = 902691576105553961L;
 
         JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBCKey"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
-                .addEventListeners(listener)
+                .addEventListeners(verificationListener)
                 .addEventListeners(verification)
                 .build()
                 .awaitReady();

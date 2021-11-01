@@ -1,4 +1,4 @@
-package io.github.superjoy0502.daahsedb;
+package io.github.superjoy0502.daahsedb.verification;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
