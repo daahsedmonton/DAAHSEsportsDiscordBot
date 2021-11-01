@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
+import java.util.Calendar;
 
 public class PartyMaker {
 
@@ -37,8 +38,10 @@ public class PartyMaker {
                                 new SubcommandData("create",
                                         "Create a Party Maker message.")
                                         .addOptions(
-                                                new OptionData(OptionType.STRING, "game",
-                                                        "Choose which game you want to make a party for.", true)
+                                                new OptionData(OptionType.STRING,
+                                                        "game",
+                                                        "Choose which game you want to make a party for.",
+                                                        true)
                                                         .addChoices(
                                                                 new Command.Choice("League of Legends", "LoL"),
                                                                 new Command.Choice("Mario Kart 8", "MK8"),
@@ -61,6 +64,8 @@ public class PartyMaker {
         User user = event.getUser();
         eb.setAuthor(user.getName(), null, user.getEffectiveAvatarUrl());
         eb.setTitle(String.format("%s Party Maker", game));
+        eb.setDescription("Complete Party Maker by following the steps!");
+
 
     }
 
