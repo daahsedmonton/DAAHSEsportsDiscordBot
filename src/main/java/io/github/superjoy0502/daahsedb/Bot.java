@@ -22,13 +22,12 @@ public class Bot {
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
                 .addEventListeners(listener)
                 .addEventListeners(verification)
-                .addEventListeners(new PartyMakerListener())
                 .build()
                 .awaitReady();
 
         api.getPresence().setActivity(Activity.playing("with Joy (Canary)"));
 
-        PartyMaker partyMaker = new PartyMaker(api.getGuildById(guildId));
+        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
