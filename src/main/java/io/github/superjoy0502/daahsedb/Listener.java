@@ -16,16 +16,27 @@ import java.util.Map;
 
 public class Listener extends ListenerAdapter {
 
+    boolean isCanary;
+
     final Long channelId = 903477388992725004L;
     final Long verifiedRole = 903098761167929394L;
     final Long helpTeacher = 59744566466580480L;
-    public Verification verification = new Verification();
     TextChannel verificationChannel;
     JDA api;
 
+    public Listener(boolean isCanary) {
+
+        this.isCanary = isCanary;
+
+    }
+
+    public Verification verification = new Verification(isCanary);
+
     // Canary OFF
-    /*@Override
+    @Override
     public void onReady(@NotNull ReadyEvent event) {
+
+        if (isCanary) return;
 
         System.out.println("Bot Ready!");
 
@@ -34,19 +45,23 @@ public class Listener extends ListenerAdapter {
         verificationChannel = event.getJDA().getTextChannelById(channelId);
         verificationChannel.sendMessage("Bot is up!").queue();
 
-    }*/
+    }
 
     // Canary OFF
-    /*@Override
+    @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+
+        if (isCanary) return;
 
         verification.sendUserDirectWelcomeMessage(event.getUser(), api);
 
-    }*/
+    }
 
     // Canary OFF
-    /*@Override
+    @Override
     public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+
+        if (isCanary) return;
 
         if (event.getUser().isBot()) return;
 
@@ -145,7 +160,7 @@ public class Listener extends ListenerAdapter {
 
         }
 
-    }*/
+    }
 
     public <K, V> K getKey(Map<K, V> map, V value) {
 

@@ -14,6 +14,8 @@ import java.util.HashMap;
 
 public class Verification extends ListenerAdapter {
 
+    boolean isCanary;
+
     public final String checkmark = "U+2705";
     public final String noentry = "U+26D4";
     public final String anticlockwise = "U+1F504";
@@ -34,6 +36,12 @@ public class Verification extends ListenerAdapter {
     public HashMap<Long, Boolean> verifyMessageCheckedMap = new HashMap<>();
     public HashMap<Long, Integer> verificationProgressMap = new HashMap<>();
     JDA api;
+
+    public Verification(boolean isCanary) {
+
+        this.isCanary = isCanary;
+
+    }
 
     public void sendUserDirectWelcomeMessage(User user, JDA api) {
 
@@ -94,7 +102,7 @@ public class Verification extends ListenerAdapter {
 
                         });
 
-                api.addEventListener(new GetUserInput(this, user, api));
+                api.addEventListener(new GetUserInput(this, user, isCanary, api));
 
                 verificationProgressMap.put(id, 2);
                 break;
@@ -110,7 +118,7 @@ public class Verification extends ListenerAdapter {
 
                             channel.sendMessage("Please enter your grade: ").queue();
 
-                            api.addEventListener(new GetUserInput(this, user, api));
+                            api.addEventListener(new GetUserInput(this, user, isCanary, api));
 
                         });
 
@@ -128,7 +136,7 @@ public class Verification extends ListenerAdapter {
 
                             channel.sendMessage("Please enter your EPSB ID: ").queue();
 
-                            api.addEventListener(new GetUserInput(this, user, api));
+                            api.addEventListener(new GetUserInput(this, user, isCanary, api));
 
                         });
 
@@ -184,8 +192,10 @@ public class Verification extends ListenerAdapter {
     }
 
     // Canary OFF
-    /*@Override
+    @Override
     public void onPrivateMessageReactionAdd(@NotNull PrivateMessageReactionAddEvent event) {
+
+        if (isCanary) return;
 
         if (event.getUser().isBot()) return;
 
@@ -228,7 +238,7 @@ public class Verification extends ListenerAdapter {
 
         }
 
-    }*/
+    }
 
     public void sendUserRequestEmbed(long id) {
 
@@ -269,21 +279,26 @@ public class Verification extends ListenerAdapter {
 
 class GetUserInput extends ListenerAdapter {
 
+    boolean isCanary;
+
     final long userId;
     Verification verification;
     JDA api;
 
-    public GetUserInput(Verification verification, User user, JDA api) {
+    public GetUserInput(Verification verification, User user, boolean isCanary, JDA api) {
 
         this.verification = verification;
         this.userId = user.getIdLong();
+        this.isCanary = isCanary;
         this.api = api;
 
     }
 
     // Canary OFF
-    /*@Override
+    @Override
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
+
+        if (isCanary) return;
 
         if (event.getAuthor().isBot()) return;
 
@@ -296,6 +311,6 @@ class GetUserInput extends ListenerAdapter {
 
         api.removeEventListener(this);
 
-    }*/
+    }
 
 }

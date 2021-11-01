@@ -13,7 +13,9 @@ public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        Listener listener = new Listener();
+        boolean isCanary = true;
+
+        Listener listener = new Listener(isCanary);
         Verification verification = listener.verification;
         long guildId = 902691576105553961L;
 
