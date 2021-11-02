@@ -21,7 +21,7 @@ public class Bot {
         Verification verification = verificationListener.verification;
         long guildId = 902691576105553961L;
 
-        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBCKey"))
+        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBKey"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
                 .addEventListeners(verificationListener)
