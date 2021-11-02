@@ -29,7 +29,7 @@ public class Bot {
                 .build()
                 .awaitReady();
 
-        api.getPresence().setActivity(Activity.watching("Youtube (version 0.1.2)"));
+        api.getPresence().setActivity(Activity.watching("you (version 0.1.2a)"));
 
 //        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
 
