@@ -15,7 +15,7 @@ public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        boolean isCanary = true;
+        boolean isCanary = false;
 
         VerificationListener verificationListener = new VerificationListener(isCanary);
         Verification verification = verificationListener.verification;
@@ -29,9 +29,9 @@ public class Bot {
                 .build()
                 .awaitReady();
 
-        api.getPresence().setActivity(Activity.playing("with Joy (Canary)"));
+        api.getPresence().setActivity(Activity.watching("Youtube (version 0.1.2)"));
 
-        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
+//        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
