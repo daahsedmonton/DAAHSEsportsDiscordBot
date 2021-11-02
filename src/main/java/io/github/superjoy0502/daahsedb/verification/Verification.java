@@ -97,7 +97,7 @@ public class Verification extends ListenerAdapter {
                 user.openPrivateChannel()
                         .queue(channel -> {
 
-                            channel.sendMessage("Please enter your full name.\n(ex: Dongwoo Kim)" +
+                            channel.sendMessage("Please enter your full name.\n(ex: Steve Jobs)\n" +
                                     "(You can redo this process if you have entered inaccurate information at the end!)").queue();
 
                         });
@@ -134,7 +134,7 @@ public class Verification extends ListenerAdapter {
                 user.openPrivateChannel()
                         .queue(channel -> {
 
-                            channel.sendMessage("Please enter your EPSB ID.\n(ex: d.kim52)").queue();
+                            channel.sendMessage("Please enter your EPSB ID.\n(ex: s.jobs11)").queue();
 
                             api.addEventListener(new GetUserInput(this, user, isCanary, api));
 
