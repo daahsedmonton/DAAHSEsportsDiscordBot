@@ -1,5 +1,7 @@
 package io.github.superjoy0502.daahsedb;
 
+import io.github.superjoy0502.daahsedb.verification.Verification;
+import io.github.superjoy0502.daahsedb.verification.VerificationListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -13,18 +15,23 @@ public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        Listener listener = new Listener();
-        Verification verification = listener.verification;
+        boolean isCanary = false;
 
-        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBKey"))
+        VerificationListener verificationListener = new VerificationListener(isCanary);
+        Verification verification = verificationListener.verification;
+        long guildId = 902691576105553961L;
+
+        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBCKey"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
-                .addEventListeners(listener)
+                .addEventListeners(verificationListener)
                 .addEventListeners(verification)
                 .build()
                 .awaitReady();
 
-        api.getPresence().setActivity(Activity.watching("Joy is playing games rn (version 0.1.1)"));
+        api.getPresence().setActivity(Activity.watching("Youtube (version 0.1.2)"));
+
+//        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {

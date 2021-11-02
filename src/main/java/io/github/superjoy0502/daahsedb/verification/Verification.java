@@ -1,4 +1,4 @@
-package io.github.superjoy0502.daahsedb;
+package io.github.superjoy0502.daahsedb.verification;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -13,6 +13,8 @@ import java.time.Instant;
 import java.util.HashMap;
 
 public class Verification extends ListenerAdapter {
+
+    boolean isCanary;
 
     public final String checkmark = "U+2705";
     public final String noentry = "U+26D4";
@@ -34,6 +36,12 @@ public class Verification extends ListenerAdapter {
     public HashMap<Long, Boolean> verifyMessageCheckedMap = new HashMap<>();
     public HashMap<Long, Integer> verificationProgressMap = new HashMap<>();
     JDA api;
+
+    public Verification(boolean isCanary) {
+
+        this.isCanary = isCanary;
+
+    }
 
     public void sendUserDirectWelcomeMessage(User user, JDA api) {
 
@@ -89,12 +97,12 @@ public class Verification extends ListenerAdapter {
                 user.openPrivateChannel()
                         .queue(channel -> {
 
-                            channel.sendMessage("Please enter your full name: " +
+                            channel.sendMessage("Please enter your full name.\n(ex: Dongwoo Kim)" +
                                     "(You can redo this process if you have entered inaccurate information at the end!)").queue();
 
                         });
 
-                api.addEventListener(new GetUserInput(this, user, api));
+                api.addEventListener(new GetUserInput(this, user, isCanary, api));
 
                 verificationProgressMap.put(id, 2);
                 break;
@@ -108,9 +116,9 @@ public class Verification extends ListenerAdapter {
                 user.openPrivateChannel()
                         .queue(channel -> {
 
-                            channel.sendMessage("Please enter your grade: ").queue();
+                            channel.sendMessage("Please enter your grade.\n(ex: 11)").queue();
 
-                            api.addEventListener(new GetUserInput(this, user, api));
+                            api.addEventListener(new GetUserInput(this, user, isCanary, api));
 
                         });
 
@@ -126,9 +134,9 @@ public class Verification extends ListenerAdapter {
                 user.openPrivateChannel()
                         .queue(channel -> {
 
-                            channel.sendMessage("Please enter your EPSB ID: ").queue();
+                            channel.sendMessage("Please enter your EPSB ID.\n(ex: d.kim52)").queue();
 
-                            api.addEventListener(new GetUserInput(this, user, api));
+                            api.addEventListener(new GetUserInput(this, user, isCanary, api));
 
                         });
 
@@ -183,8 +191,11 @@ public class Verification extends ListenerAdapter {
 
     }
 
+    // Canary OFF
     @Override
     public void onPrivateMessageReactionAdd(@NotNull PrivateMessageReactionAddEvent event) {
+
+        if (isCanary) return;
 
         if (event.getUser().isBot()) return;
 
@@ -268,20 +279,26 @@ public class Verification extends ListenerAdapter {
 
 class GetUserInput extends ListenerAdapter {
 
+    boolean isCanary;
+
     final long userId;
     Verification verification;
     JDA api;
 
-    public GetUserInput(Verification verification, User user, JDA api) {
+    public GetUserInput(Verification verification, User user, boolean isCanary, JDA api) {
 
         this.verification = verification;
         this.userId = user.getIdLong();
+        this.isCanary = isCanary;
         this.api = api;
 
     }
 
+    // Canary OFF
     @Override
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
+
+        if (isCanary) return;
 
         if (event.getAuthor().isBot()) return;
 
