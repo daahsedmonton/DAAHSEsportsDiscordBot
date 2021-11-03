@@ -30,7 +30,7 @@ public class Bot {
         Verification verification = verificationListener.verification;
         long guildId = 902691576105553961L;
 
-        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBCKey"))
+        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBKey"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
                 .addEventListeners(verificationListener)
@@ -41,35 +41,35 @@ public class Bot {
         api.getPresence().setActivity(Activity.watching("Youtube (version Canary)"));
 
         EmbedBuilder esb = new EmbedBuilder();
-        esb.setTitle(":pushpin: DAAHS Esports Discord Server Rules v0.1.3");
+        esb.setTitle(":pushpin: DAAHS Esports Discord Server Rules v0.2.1");
         esb.setColor(new Color(12, 60, 105));
         esb.setDescription("• The following rules define the rules of DAAHS Esports Discord Server.\n" +
                 "• These rules must be followed strictly, or else penalties may apply.\n" +
-                "• Please change your nickname to your real name.");
+                "• Please change your nickname to your real name.\n" +
+                "• The maximum rating permitted in messages is **G**.");
 
-        api.getTextChannelById(905337770132774933L).sendMessage(
+        api.getTextChannelById(902691576105553964L).sendMessage(
                 esb.build()
         ).queue();
 
         EmbedBuilder esb2 = new EmbedBuilder();
         esb2.setTitle("Discord Official Guideline", "https://discord.com/guidelines");
         esb2.setColor(new Color(12, 60, 105));
-        esb2.setDescription("• The official guideline of Discord has to be followed in this server.\n");
+        esb2.setDescription("• The official guideline of Discord has to be followed in this server.");
 
-        api.getTextChannelById(905337770132774933L).sendMessage(
+        api.getTextChannelById(902691576105553964L).sendMessage(
                 esb2.build()
         ).queue();
 
         EmbedBuilder esb3 = new EmbedBuilder();
         esb3.setTitle("Respect each others");
         esb3.setColor(new Color(12, 60, 105));
-        esb3.setDescription("• In a community, every person should enjoy the space.\n" +
-                "• Discriminations towards others are prohibited.\n" +
+        esb3.setDescription("• In a community, every person should be able to **enjoy** the space.\n" +
+                "• Discrimination towards others is prohibited.\n" +
                 "• Mind your manners.\n" +
-                "• Do not swear.\n" +
-                "• The maximum rating permitted in messages is **PG**.");
+                "• Do not swear.");
 
-        api.getTextChannelById(905337770132774933L).sendMessage(
+        api.getTextChannelById(902691576105553964L).sendMessage(
                 esb3.build()
         ).queue();
 
@@ -81,8 +81,23 @@ public class Bot {
                 "• Know what you should do and what you should not do.\n" +
                 "• Do not perform immature acts such as spamming, mentioning everybody, etc.");
 
-        api.getTextChannelById(905337770132774933L).sendMessage(
+        api.getTextChannelById(902691576105553964L).sendMessage(
                 esb4.build()
+        ).queue();
+
+        User bot = api.getSelfUser();
+
+        EmbedBuilder esbb = new EmbedBuilder();
+        esbb.setTitle("DAAHS Esports Discord Bot");
+        esbb.setColor(new Color(12, 60, 105));
+        esbb.setDescription("• " + bot.getAsMention() + " is a bot made by DAAHS Esports leaders.\n" +
+                "• This bot has many functions, and one of them is to verify newcomers.\n" +
+                "• When you join the server, I will DM you to help you verify yourself as a DAAHS member.\n" +
+                "• But, when I'm offline and cannot help you, please use " + api.getTextChannelById(903689843438153779L).getAsMention() + ".\n" +
+                "• <@904288301110919168> is my replica, only used by the developers to test out new functions that will be added to me.");
+
+        api.getTextChannelById(902691576105553964L).sendMessage(
+                esbb.build()
         ).queue();
 
         EmbedBuilder esb5 = new EmbedBuilder();
@@ -90,7 +105,7 @@ public class Bot {
         esb5.setColor(new Color(12, 60, 105));
         esb5.setDescription("• Have fun.");
 
-        api.getTextChannelById(905337770132774933L).sendMessage(
+        api.getTextChannelById(902691576105553964L).sendMessage(
                 esb5.build()
         ).queue();
 
@@ -98,7 +113,7 @@ public class Bot {
 //        api.getTextChannelById(905275922075234376L).sendMessage(".").queue();
 
         PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
-        User bot = api.getSelfUser();
+
 
         updateStatusOnline(isCanary, startTime, api, bot);
 
