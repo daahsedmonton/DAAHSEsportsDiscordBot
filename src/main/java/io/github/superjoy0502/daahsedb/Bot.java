@@ -2,28 +2,17 @@ package io.github.superjoy0502.daahsedb;
 
 import io.github.superjoy0502.daahsedb.verification.Verification;
 import io.github.superjoy0502.daahsedb.verification.VerificationListener;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-
-import java.awt.*;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        boolean isCanary = true;
+        boolean isCanary = false;
         long startTime = System.nanoTime();
 
         VerificationListener verificationListener = new VerificationListener(isCanary);
@@ -38,9 +27,15 @@ public class Bot {
                 .build()
                 .awaitReady();
 
-        api.getPresence().setActivity(Activity.watching("Youtube (version Canary)"));
+        User bot = api.getSelfUser();
+        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
+        UpdateStatus.setVariables(isCanary, startTime, api, bot);
+        UpdateStatus.updateStatusOnline();
 
-        EmbedBuilder esb = new EmbedBuilder();
+        api.getPresence().setActivity(Activity.playing("in Ionia (version 0.2.0)"));
+
+        // region Rules
+        /*EmbedBuilder esb = new EmbedBuilder();
         esb.setTitle(":pushpin: DAAHS Esports Discord Server Rules v0.2.1");
         esb.setColor(new Color(12, 60, 105));
         esb.setDescription("• The following rules define the rules of DAAHS Esports Discord Server.\n" +
@@ -85,8 +80,6 @@ public class Bot {
                 esb4.build()
         ).queue();
 
-        User bot = api.getSelfUser();
-
         EmbedBuilder esbb = new EmbedBuilder();
         esbb.setTitle("DAAHS Esports Discord Bot");
         esbb.setColor(new Color(12, 60, 105));
@@ -107,127 +100,10 @@ public class Bot {
 
         api.getTextChannelById(902691576105553964L).sendMessage(
                 esb5.build()
-        ).queue();
-
+        ).queue();*/
+        // endregion
 
 //        api.getTextChannelById(905275922075234376L).sendMessage(".").queue();
-
-        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
-
-
-        updateStatusOnline(isCanary, startTime, api, bot);
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-
-            @Override
-            public void run() {
-                updateStatusOffline(isCanary, startTime, api, bot);
-            }
-
-        });
-
-    }
-
-    private static void updateStatusOnline(boolean isCanary, long startTime, JDA api, User bot) {
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        Runnable task = () -> {
-
-            api.getTextChannelById(905275922075234376L).retrieveMessageById(905290567846592562L).queue(
-                    message -> {
-
-                        long endTime   = System.nanoTime();
-                        long totalTime = endTime - startTime;
-                        int hours = Math.toIntExact(TimeUnit.NANOSECONDS.toHours(totalTime));
-                        int minutes = Math.toIntExact(TimeUnit.NANOSECONDS.toMinutes(totalTime) -
-                                TimeUnit.HOURS.toMinutes(TimeUnit.NANOSECONDS.toHours(totalTime)));
-
-                        EmbedBuilder eb = new EmbedBuilder();
-                        eb.setAuthor(bot.getName(), null, bot.getEffectiveAvatarUrl());
-                        eb.setTitle(":green_circle: Online");
-                        eb.setColor(!isCanary ? new Color(12, 60, 105) : new Color(252, 164, 28));
-                        eb.addField(
-                                "Uptime",
-                                String.format(
-                                        "%s hours %s minutes",
-                                        hours,
-                                        minutes
-                                ),
-                                true
-                        );
-                        eb.addField(
-                                "Used Memory",
-                                String.format(
-                                        "%s / %s",
-                                        ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576) + "MB",
-                                        (Runtime.getRuntime().maxMemory() / 1048576) + "MB"
-                                ),
-                                true
-                        );
-                        eb.setFooter(bot.getName());
-                        eb.setTimestamp(Instant.now());
-
-                        message.editMessage(
-                                " "
-                        ).queue();
-
-                        message.editMessage(
-                                eb.build()
-                        ).queue();
-
-                    }
-            );
-
-        };
-        executorService.scheduleWithFixedDelay(task, 0, 1, TimeUnit.MINUTES);
-    }
-
-    private static void updateStatusOffline(boolean isCanary, long startTime, JDA api, User bot) {
-
-        api.getTextChannelById(905275922075234376L).retrieveMessageById(905290567846592562L).queue(
-                message -> {
-
-                    long endTime   = System.nanoTime();
-                    long totalTime = endTime - startTime;
-                    int hours = Math.toIntExact(TimeUnit.NANOSECONDS.toHours(totalTime));
-                    int minutes = Math.toIntExact(TimeUnit.NANOSECONDS.toMinutes(totalTime) -
-                            TimeUnit.HOURS.toMinutes(TimeUnit.NANOSECONDS.toHours(totalTime)));
-
-                    EmbedBuilder eb = new EmbedBuilder();
-                    eb.setAuthor(bot.getName(), null, bot.getEffectiveAvatarUrl());
-                    eb.setTitle(":red_circle: Offline");
-                    eb.setColor(!isCanary ? new Color(12, 60, 105) : new Color(252, 164, 28));
-                    eb.addField(
-                            "Last Uptime",
-                            String.format(
-                                    "%s hours %s minutes",
-                                    hours,
-                                    minutes
-                            ),
-                            true
-                    );
-
-                    LocalDateTime myDateObj = LocalDateTime.now();
-                    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E., MMM. dd\nHH:mm:ss");
-                    String formattedDate = myDateObj.format(myFormatObj);
-
-                    eb.addField(
-                            "Offline Since",
-                            formattedDate.toString(),
-                            true
-                    );
-                    eb.setFooter(bot.getName());
-                    eb.setTimestamp(Instant.now());
-
-                    message.editMessage(
-                            " "
-                    ).queue();
-
-                    message.editMessage(
-                            eb.build()
-                    ).queue();
-
-                }
-        );
 
     }
 

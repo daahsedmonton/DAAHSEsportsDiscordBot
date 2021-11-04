@@ -3,22 +3,18 @@ package io.github.superjoy0502.daahsedb;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
-import java.util.Calendar;
 
 public class PartyMaker {
 
@@ -31,9 +27,10 @@ public class PartyMaker {
         commands.addCommands(
                 new CommandData("test",
                         "A test command. Sends current time to the user who triggered the command.")
+                        .addOptions(new OptionData(OptionType.STRING, "testoption", "testDescription", true))
         );
 
-        commands.addCommands(
+        /*commands.addCommands(
                 new CommandData("pm",
                         "Party Maker. Starts the Party Maker process.")
                         .addSubcommands(
@@ -52,7 +49,7 @@ public class PartyMaker {
                                                         )
                                         )
                         )
-        );
+        );*/
 
         commands.queue();
 
@@ -121,11 +118,16 @@ class PartyMakerListener extends ListenerAdapter {
         switch (event.getName()) {
 
             case "test":
-                event.deferReply().queue();
-                event.getHook().editOriginal(Instant.now().toString()).queue();
+                event.deferReply(true).queue();
+                String option = event.getOption("testoption").getAsString();
+                if (option.equals(System.getenv("DAAHSEDBSecret"))) {
+                    System.out.println("shutdown");
+                    event.getHook().editOriginal("Bot is now shutting down.").queue();
+                    UpdateStatus.updateStatusOffline();
+                } else event.getHook().editOriginal(option).queue();
                 break;
 
-            case "pm":
+            /*case "pm":
                 switch (event.getSubcommandName()) {
 
                     case "create":
@@ -133,7 +135,7 @@ class PartyMakerListener extends ListenerAdapter {
                         break;
 
                 }
-                break;
+                break;*/
 
             default:
                 event.reply("I can't handle that command right now :(").setEphemeral(true).queue();

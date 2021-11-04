@@ -14,8 +14,6 @@ import java.util.HashMap;
 
 public class Verification extends ListenerAdapter {
 
-    boolean isCanary;
-
     public final String checkmark = "U+2705";
     public final String noentry = "U+26D4";
     public final String anticlockwise = "U+1F504";
@@ -35,6 +33,7 @@ public class Verification extends ListenerAdapter {
     public HashMap<Long, String> epsbIdMap = new HashMap<>();
     public HashMap<Long, Boolean> verifyMessageCheckedMap = new HashMap<>();
     public HashMap<Long, Integer> verificationProgressMap = new HashMap<>();
+    boolean isCanary;
     JDA api;
 
     public Verification(boolean isCanary) {
@@ -279,9 +278,8 @@ public class Verification extends ListenerAdapter {
 
 class GetUserInput extends ListenerAdapter {
 
-    boolean isCanary;
-
     final long userId;
+    boolean isCanary;
     Verification verification;
     JDA api;
 
