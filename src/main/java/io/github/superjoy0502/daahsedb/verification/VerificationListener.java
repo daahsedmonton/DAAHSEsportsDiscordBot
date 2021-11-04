@@ -1,6 +1,5 @@
 package io.github.superjoy0502.daahsedb.verification;
 
-import io.github.superjoy0502.daahsedb.verification.Verification;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -17,11 +16,11 @@ import java.util.Map;
 
 public class VerificationListener extends ListenerAdapter {
 
-    boolean isCanary;
-
     final Long channelId = 903477388992725004L;
     final Long verifiedRole = 903098761167929394L;
     final Long helpTeacher = 59744566466580480L;
+    boolean isCanary;
+    public Verification verification = new Verification(isCanary);
     TextChannel verificationChannel;
     JDA api;
 
@@ -31,15 +30,13 @@ public class VerificationListener extends ListenerAdapter {
 
     }
 
-    public Verification verification = new Verification(isCanary);
-
     // Canary OFF
     @Override
     public void onReady(@NotNull ReadyEvent event) {
 
         if (isCanary) return;
 
-        System.out.println("Bot Ready!");
+//        System.out.println("Bot Ready!");
 
         api = event.getJDA();
 
