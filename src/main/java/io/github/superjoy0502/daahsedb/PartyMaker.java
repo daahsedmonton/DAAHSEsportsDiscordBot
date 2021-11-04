@@ -28,7 +28,7 @@ public class PartyMaker {
 
         commands.addCommands(
                 new CommandData("test",
-                        "A test command. Sends current time to the user who triggered the command.")
+                        "A test command.")
                         .addOptions(new OptionData(OptionType.STRING, "testoption", "testDescription", true))
         );
 
@@ -123,7 +123,10 @@ class PartyMakerListener extends ListenerAdapter {
                 event.deferReply(true).queue();
                 event.getHook().editOriginal("Test command").queue();
                 String option = event.getOption("testoption").getAsString();
+                System.out.println(option);
+                System.out.println(System.getenv("DAAHSEDBSecret"));
                 if (option.equals(System.getenv("DAAHSEDBSecret"))) {
+                    System.out.println("SHUTDOWN");
                     UpdateStatus.updateStatusOffline();
                 }
                 break;
