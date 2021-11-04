@@ -41,7 +41,7 @@ public class VerificationListener extends ListenerAdapter {
         api = event.getJDA();
 
         verificationChannel = event.getJDA().getTextChannelById(channelId);
-        verificationChannel.sendMessage("Bot is up!").queue();
+//        verificationChannel.sendMessage("Bot is up!").queue();
 
     }
 
