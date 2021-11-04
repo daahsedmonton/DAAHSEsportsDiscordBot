@@ -12,14 +12,16 @@ public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        boolean isCanary = false;
+        boolean isCanary = true;
         long startTime = System.nanoTime();
+        String envVar;
+        envVar = isCanary ? "DAAHSEDBCKey" : "DAAHSEDBKey";
 
         VerificationListener verificationListener = new VerificationListener(isCanary);
         Verification verification = verificationListener.verification;
         long guildId = 902691576105553961L;
 
-        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBCKey"))
+        JDA api = JDABuilder.createDefault(System.getenv(envVar))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
                 .addEventListeners(verificationListener)
