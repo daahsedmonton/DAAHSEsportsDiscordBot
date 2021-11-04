@@ -32,7 +32,7 @@ public class PartyMaker {
                         .addOptions(new OptionData(OptionType.STRING, "testoption", "testDescription", true))
         );
 
-        commands.addCommands(
+        /*commands.addCommands(
                 new CommandData("pm",
                         "Party Maker. Starts the Party Maker process.")
                         .addSubcommands(
@@ -51,13 +51,13 @@ public class PartyMaker {
                                                         )
                                         )
                         )
-        );
+        );*/
 
         commands.queue();
 
     }
 
-    public void CreatePartyMaker(SlashCommandEvent event, String game) {
+    /*public void CreatePartyMaker(SlashCommandEvent event, String game) {
 
         System.out.println("CreatePartyMaker");
 
@@ -98,7 +98,7 @@ public class PartyMaker {
                 )
                 .queue();
 
-    }
+    }*/
 
 }
 
@@ -121,15 +121,14 @@ class PartyMakerListener extends ListenerAdapter {
 
             case "test":
                 event.deferReply(true).queue();
+                event.getHook().editOriginal("Test command").queue();
                 String option = event.getOption("testoption").getAsString();
                 if (option.equals(System.getenv("DAAHSEDBSecret"))) {
-                    System.out.println("shutdown");
-                    event.getHook().editOriginal("Bot is now shutting down.").queue();
                     UpdateStatus.updateStatusOffline();
-                } else event.getHook().editOriginal(option).queue();
+                }
                 break;
 
-            case "pm":
+            /*case "pm":
                 switch (event.getSubcommandName()) {
 
                     case "create":
@@ -137,7 +136,7 @@ class PartyMakerListener extends ListenerAdapter {
                         break;
 
                 }
-                break;
+                break;*/
 
             default:
                 event.reply("I can't handle that command right now :(").setEphemeral(true).queue();

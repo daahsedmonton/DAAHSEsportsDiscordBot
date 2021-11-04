@@ -12,7 +12,7 @@ public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        boolean isCanary = true;
+        boolean isCanary = false;
         long startTime = System.nanoTime();
         String envVar;
         envVar = isCanary ? "DAAHSEDBCKey" : "DAAHSEDBKey";
@@ -34,7 +34,7 @@ public class Bot {
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (version Canary)"));
+        api.getPresence().setActivity(Activity.playing("in Ionia (version 0.2.1)"));
 
         // region Rules
         /*EmbedBuilder esb = new EmbedBuilder();
