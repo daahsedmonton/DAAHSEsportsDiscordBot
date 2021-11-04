@@ -7,9 +7,11 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +32,7 @@ public class PartyMaker {
                         .addOptions(new OptionData(OptionType.STRING, "testoption", "testDescription", true))
         );
 
-        /*commands.addCommands(
+        commands.addCommands(
                 new CommandData("pm",
                         "Party Maker. Starts the Party Maker process.")
                         .addSubcommands(
@@ -49,7 +51,7 @@ public class PartyMaker {
                                                         )
                                         )
                         )
-        );*/
+        );
 
         commands.queue();
 
@@ -127,7 +129,7 @@ class PartyMakerListener extends ListenerAdapter {
                 } else event.getHook().editOriginal(option).queue();
                 break;
 
-            /*case "pm":
+            case "pm":
                 switch (event.getSubcommandName()) {
 
                     case "create":
@@ -135,7 +137,7 @@ class PartyMakerListener extends ListenerAdapter {
                         break;
 
                 }
-                break;*/
+                break;
 
             default:
                 event.reply("I can't handle that command right now :(").setEphemeral(true).queue();

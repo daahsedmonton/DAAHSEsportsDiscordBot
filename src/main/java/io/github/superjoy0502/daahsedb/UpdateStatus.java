@@ -18,6 +18,7 @@ public class UpdateStatus extends ListenerAdapter {
     static JDA api;
     static User bot;
     static long msgId;
+    static String offlineMsg;
 
     static void setVariables(boolean isCanary, long startTime, JDA api, User bot) {
 
@@ -27,6 +28,12 @@ public class UpdateStatus extends ListenerAdapter {
         UpdateStatus.bot = bot;
 
         msgId = isCanary ? 905290567846592562L : 905697791773401088L;
+        offlineMsg = isCanary ? "haha canary bot go brrrrr" :
+                "I'm offline right now! You cannot use all of my functions until I come back online.\n" +
+                "If you just came in to the server, sorry.\n" +
+                "I cannot help you to verify yourself and give you access to all of the channels.\n" +
+                "Please use <#903689843438153779> to verify yourself.\n" +
+                "I am very sorry ;(";
 
     }
 
@@ -91,11 +98,7 @@ public class UpdateStatus extends ListenerAdapter {
                     EmbedBuilder eb = new EmbedBuilder();
                     eb.setAuthor(bot.getName(), null, bot.getEffectiveAvatarUrl());
                     eb.setTitle(":red_circle: Offline");
-                    eb.setDescription("I'm offline right now! You cannot use all of my functions until I come back online.\n" +
-                            "If you just came in to the server, sorry.\n" +
-                            "I cannot help you to verify yourself and give you access to all of the channels.\n" +
-                            "Please use <#903689843438153779> to verify yourself.\n" +
-                            "I am very sorry ;(");
+                    eb.setDescription(offlineMsg);
                     eb.setColor(!isCanary ? new Color(12, 60, 105) : new Color(252, 164, 28));
                     eb.setFooter(bot.getName());
                     eb.setTimestamp(Instant.now());

@@ -19,7 +19,7 @@ public class Bot {
         Verification verification = verificationListener.verification;
         long guildId = 902691576105553961L;
 
-        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBKey"))
+        JDA api = JDABuilder.createDefault(System.getenv("DAAHSEDBCKey"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
                 .addEventListeners(verificationListener)
@@ -32,7 +32,7 @@ public class Bot {
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (version 0.2.0)"));
+        api.getPresence().setActivity(Activity.playing("in Ionia (version Canary)"));
 
         // region Rules
         /*EmbedBuilder esb = new EmbedBuilder();
