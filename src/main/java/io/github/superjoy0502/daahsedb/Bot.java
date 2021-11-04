@@ -34,7 +34,7 @@ public class Bot {
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (version 0.2.1)"));
+        api.getPresence().setActivity(Activity.playing("in Ionia (version 0.2.2)"));
 
         // region Rules
         /*EmbedBuilder esb = new EmbedBuilder();
