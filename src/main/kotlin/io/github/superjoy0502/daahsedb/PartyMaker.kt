@@ -14,43 +14,13 @@ import io.github.superjoy0502.daahsedb.PartyMaker
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import io.github.superjoy0502.daahsedb.UpdateStatus
 import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.components.Button
 import java.time.Instant
 
 class PartyMaker(api: JDA, guild: Guild) {
-    var partyMemberCount = 4
-    fun CreatePartyMaker(event: SlashCommandEvent, game: String?) {
-        println("CreatePartyMaker")
-        event.deferReply(true).queue()
-        val hook = event.hook
-        hook.setEphemeral(true)
-
-        val eb = EmbedBuilder()
-        val user = event.user
-        eb.setAuthor(user.name, null, user.effectiveAvatarUrl)
-        eb.setTitle(String.format("%s Party Maker", game))
-        eb.setDescription("Complete Party Maker by following the steps!")
-        eb.addField("Step 1", "Set the amount of people you want. (Including yourself)", false)
-        eb.addField("Party Count", String.format("1 / %d", partyMemberCount), false)
-        eb.setFooter("Party Maker v0.1.0")
-        eb.setTimestamp(Instant.now())
-        hook.sendMessageEmbeds(eb.build())
-            .addActionRow(
-                Button.secondary("s5", "-5"),
-                Button.secondary("s1", "-1"),
-                Button.secondary("a1", "+1"),
-                Button.secondary("a5", "+5"),
-                Button.success("setPartyCount", "Submit")
-            )
-            .queue()
-    }
-
-    fun controlMemberCount(x: Int) {
-        partyMemberCount += x
-    }
-
     init {
         api.addEventListener(PartyMakerListener(this))
         val commands = guild.updateCommands()
@@ -83,13 +53,58 @@ class PartyMaker(api: JDA, guild: Guild) {
                                         "Mario Kart 8 Deluxe",
                                         "Mario Kart 8 Deluxe"
                                     ),
-                                    Command.Choice("Super Smash Bros", "Super Smash Bros")
+                                    Command.Choice(
+                                        "Super Smash Bros",
+                                        "Super Smash Bros"
+                                    )
                                 )
                         )
                 )
         )
         commands.queue()
     }
+    var partyMemberCount = 4
+    var embedMessageID: Long = 0
+
+    fun CreatePartyMaker(event: SlashCommandEvent, game: String?) {
+        println("CreatePartyMaker")
+        event.deferReply(true).queue()
+        val hook = event.hook
+        hook.setEphemeral(true)
+
+        val eb = EmbedBuilder()
+        val user = event.user
+        eb.setAuthor(user.name, null, user.effectiveAvatarUrl)
+        eb.setTitle(String.format("%s Party Maker", game))
+        eb.setDescription("Complete Party Maker by following the steps!")
+        eb.addField("Step 1", "Set the amount of people you want. (Including yourself)", false)
+        eb.addField("Party Count", String.format("1 / %d", partyMemberCount), false)
+        eb.setFooter("Party Maker v0.1.0")
+        eb.setTimestamp(Instant.now())
+        hook.sendMessageEmbeds(eb.build())
+            .addActionRow(
+                Button.secondary("s5", "-5"),
+                Button.secondary("s1", "-1"),
+                Button.secondary("a1", "+1"),
+                Button.secondary("a5", "+5"),
+                Button.success("setPartyCount", "Submit")
+            )
+            .queue{
+                message: Message ->
+                embedMessageID = message.idLong
+            }
+    }
+
+    fun controlMemberCount(x: Int) {
+        partyMemberCount += x
+    }
+
+    fun updateEmbed() {
+
+        
+
+    }
+
 }
 
 internal class PartyMakerListener(var partyMaker: PartyMaker) : ListenerAdapter() {
