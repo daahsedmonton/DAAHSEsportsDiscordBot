@@ -12,7 +12,7 @@ public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        boolean isCanary = false;
+        boolean isCanary = true;
         long startTime = System.nanoTime();
         String envVar;
         envVar = isCanary ? "DAAHSEDBCKey" : "DAAHSEDBKey";
