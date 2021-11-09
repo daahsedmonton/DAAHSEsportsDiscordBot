@@ -102,6 +102,7 @@ public class VerificationListener extends ListenerAdapter {
 
                                         channel.sendMessage("Thank you for waiting.\n" +
                                                 "You are verified to use the DAAHS Esports Discord Server.\n" +
+                                                "Please change your nickname in the server to your real name and read <#902691576105553964>.\n" +
                                                 "Have fun! :smile: ").queue();
 
                                     });

@@ -79,7 +79,7 @@ class PartyMaker(api: JDA, guild: Guild) {
         eb.setDescription("Complete Party Maker by following the steps!")
         eb.addField("Step 1", "Set the amount of people you want. (Including yourself)", false)
         eb.addField("Party Count", String.format("1 / %d", partyMemberCount), false)
-        eb.setFooter("Party Maker v0.1.0")
+        eb.setFooter("Party Maker v0.2.0")
         eb.setTimestamp(Instant.now())
         hook.sendMessageEmbeds(eb.build())
             .addActionRow(

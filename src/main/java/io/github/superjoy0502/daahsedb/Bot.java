@@ -12,7 +12,7 @@ public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        boolean isCanary = true;
+        boolean isCanary = false;
         long startTime = System.nanoTime();
         String envVar;
         envVar = isCanary ? "DAAHSEDBCKey" : "DAAHSEDBKey";
@@ -30,11 +30,11 @@ public class Bot {
                 .awaitReady();
 
         User bot = api.getSelfUser();
-        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
+//        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (version 0.2.2)"));
+        api.getPresence().setActivity(Activity.playing("in Demacia (version 1.0.0)"));
 
         // region Rules
         /*EmbedBuilder esb = new EmbedBuilder();

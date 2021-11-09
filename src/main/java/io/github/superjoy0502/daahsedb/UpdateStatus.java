@@ -64,7 +64,7 @@ public class UpdateStatus extends ListenerAdapter {
                                 true
                         );
                         eb.addField(
-                                "Used Memory",
+                                "Memory Used",
                                 String.format(
                                         "%s / %s",
                                         ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576) + "MB",
