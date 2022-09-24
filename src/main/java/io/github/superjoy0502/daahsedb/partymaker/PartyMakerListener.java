@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class PartyMakerListener extends ListenerAdapter {
 
@@ -60,7 +61,7 @@ public class PartyMakerListener extends ListenerAdapter {
 
                 VoiceChannel voiceChannel = event.getGuild().getVoiceChannelsByName(name, false).get(0);
 
-                voiceChannel.createInvite().setMaxUses(1).flatMap(
+                voiceChannel.createInvite().setMaxUses(1).setMaxAge(1L, TimeUnit.HOURS).flatMap(
                         invite -> event.getHook().editOriginalComponents(ActionRow.of(Button.link(invite.getUrl(), "Join your session")))
                 ).queue();
 
