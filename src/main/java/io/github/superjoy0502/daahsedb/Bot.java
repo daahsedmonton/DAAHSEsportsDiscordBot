@@ -33,7 +33,7 @@ public class Bot {
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 220943)"));
+        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 220944)"));
 
 //        SendRuleMessages(api, bot);
 
