@@ -29,11 +29,7 @@ public class UpdateStatus extends ListenerAdapter {
 
         msgId = isCanary ? 905290567846592562L : 905697791773401088L;
         offlineMsg = isCanary ? "haha canary bot go brrrrr" :
-                "I'm offline right now! You cannot use all of my functions until I come back online.\n" +
-                "If you just came in to the server, sorry.\n" +
-                "I cannot help you to verify yourself and give you access to all of the channels.\n" +
-                "Please use <#903689843438153779> to verify yourself.\n" +
-                "I am very sorry ;(";
+                "Offline";
 
     }
 
@@ -79,7 +75,7 @@ public class UpdateStatus extends ListenerAdapter {
                                 " "
                         ).queue();
 
-                        message.editMessage(
+                        message.editMessageEmbeds(
                                 eb.build()
                         ).queue();
 
@@ -107,7 +103,7 @@ public class UpdateStatus extends ListenerAdapter {
                             " "
                     ).queue();
 
-                    message.editMessage(
+                    message.editMessageEmbeds(
                             eb.build()
                     ).queue();
 

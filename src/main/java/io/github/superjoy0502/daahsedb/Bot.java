@@ -1,7 +1,5 @@
 package io.github.superjoy0502.daahsedb;
 
-import io.github.superjoy0502.daahsedb.verification.Verification;
-import io.github.superjoy0502.daahsedb.verification.VerificationListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -17,15 +15,11 @@ public class Bot {
         String envVar;
         envVar = isCanary ? "DAAHSEDBCKey" : "DAAHSEDBKey";
 
-        VerificationListener verificationListener = new VerificationListener(isCanary);
-        Verification verification = verificationListener.verification;
         long guildId = 902691576105553961L;
 
         JDA api = JDABuilder.createDefault(System.getenv(envVar))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
-                .addEventListeners(verificationListener)
-                .addEventListeners(verification)
                 .build()
                 .awaitReady();
 
@@ -34,7 +28,7 @@ public class Bot {
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Demacia (version 1.0.0)"));
+        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 220940"));
 
         // region Rules
         /*EmbedBuilder esb = new EmbedBuilder();
@@ -105,7 +99,6 @@ public class Bot {
         ).queue();*/
         // endregion
 
-//        api.getTextChannelById(905275922075234376L).sendMessage(".").queue();
 
     }
 
