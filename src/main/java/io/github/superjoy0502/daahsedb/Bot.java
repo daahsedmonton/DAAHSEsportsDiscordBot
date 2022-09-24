@@ -1,8 +1,10 @@
 package io.github.superjoy0502.daahsedb;
 
+import io.github.superjoy0502.daahsedb.partymaker.PartyMakerListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
@@ -15,22 +17,30 @@ public class Bot {
         String envVar;
         envVar = isCanary ? "DAAHSEDBCKey" : "DAAHSEDBKey";
 
-        long guildId = 902691576105553961L;
-
         JDA api = JDABuilder.createDefault(System.getenv(envVar))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_MESSAGES)
+                .addEventListeners(new CommandsListener(),
+                        new PartyMakerListener())
                 .build()
                 .awaitReady();
 
+        long guildId = 902691576105553961L;
+        Guild guild = api.getGuildById(guildId);
+
         User bot = api.getSelfUser();
-//        PartyMaker partyMaker = new PartyMaker(api, api.getGuildById(guildId));
+        Commands commands = new Commands(api, guild);
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 220942)"));
+        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 220943)"));
 
-        // region Rules
+//        SendRuleMessages(api, bot);
+
+
+    }
+
+    private static void SendRuleMessages(JDA api, User bot) {
         /*EmbedBuilder esb = new EmbedBuilder();
         esb.setTitle(":pushpin: DAAHS Esports Discord Server Rules v0.2.1");
         esb.setColor(new Color(12, 60, 105));
@@ -97,9 +107,6 @@ public class Bot {
         api.getTextChannelById(902691576105553964L).sendMessage(
                 esb5.build()
         ).queue();*/
-        // endregion
-
-
     }
 
 }

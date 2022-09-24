@@ -46,38 +46,34 @@ public class UpdateStatus extends ListenerAdapter {
                         int minutes = Math.toIntExact(TimeUnit.NANOSECONDS.toMinutes(totalTime) -
                                 TimeUnit.HOURS.toMinutes(TimeUnit.NANOSECONDS.toHours(totalTime)));
 
-                        EmbedBuilder eb = new EmbedBuilder();
-                        eb.setAuthor(bot.getName(), null, bot.getEffectiveAvatarUrl());
-                        eb.setTitle(":green_circle: Online");
-                        eb.setColor(!isCanary ? new Color(12, 60, 105) : new Color(252, 164, 28));
-                        eb.addField(
-                                "Uptime",
-                                String.format(
-                                        "%s hours %s minutes",
-                                        hours,
-                                        minutes
-                                ),
-                                true
-                        );
-                        eb.addField(
-                                "Memory Used",
-                                String.format(
-                                        "%s / %s",
-                                        ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576) + "MB",
-                                        (Runtime.getRuntime().maxMemory() / 1048576) + "MB"
-                                ),
-                                true
-                        );
-                        eb.setFooter(bot.getName());
-                        eb.setTimestamp(Instant.now());
+                        EmbedBuilder eb = new EmbedBuilder()
+                                .setAuthor(bot.getName(), null, bot.getEffectiveAvatarUrl())
+                                .setTitle(":green_circle: Online")
+                                .setColor(!isCanary ? new Color(12, 60, 105) : new Color(252, 164, 28))
+                                .addField(
+                                        "Uptime",
+                                        String.format(
+                                                "%s hours %s minutes",
+                                                hours,
+                                                minutes
+                                        ),
+                                        true
+                                )
+                                .addField(
+                                        "Memory Used",
+                                        String.format(
+                                                "%s / %s",
+                                                ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576) + "MB",
+                                                (Runtime.getRuntime().maxMemory() / 1048576) + "MB"
+                                        ),
+                                        true
+                                )
+                                .setFooter(bot.getName())
+                                .setTimestamp(Instant.now());
 
                         message.editMessage(
                                 " "
-                        ).queue();
-
-                        message.editMessageEmbeds(
-                                eb.build()
-                        ).queue();
+                        ).flatMap(message1 -> message1.editMessageEmbeds(eb.build())).queue();
 
                     }
             );
