@@ -35,50 +35,44 @@ public class UpdateStatus extends ListenerAdapter {
 
     static void updateStatusOnline() {
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        Runnable task = () -> {
+        Runnable task = () -> api.getTextChannelById(905275922075234376L).retrieveMessageById(msgId).queue(
+                message -> {
 
-            api.getTextChannelById(905275922075234376L).retrieveMessageById(msgId).queue(
-                    message -> {
+                    long endTime = System.nanoTime();
+                    long totalTime = endTime - startTime;
+                    int hours = Math.toIntExact(TimeUnit.NANOSECONDS.toHours(totalTime));
+                    int minutes = Math.toIntExact(TimeUnit.NANOSECONDS.toMinutes(totalTime) -
+                            TimeUnit.HOURS.toMinutes(TimeUnit.NANOSECONDS.toHours(totalTime)));
 
-                        long endTime = System.nanoTime();
-                        long totalTime = endTime - startTime;
-                        int hours = Math.toIntExact(TimeUnit.NANOSECONDS.toHours(totalTime));
-                        int minutes = Math.toIntExact(TimeUnit.NANOSECONDS.toMinutes(totalTime) -
-                                TimeUnit.HOURS.toMinutes(TimeUnit.NANOSECONDS.toHours(totalTime)));
+                    message.editMessageEmbeds(new EmbedBuilder()
+                                    .setAuthor(bot.getName(), null, bot.getEffectiveAvatarUrl())
+                                    .setTitle(":green_circle: Online")
+                                    .setColor(!isCanary ? new Color(12, 60, 105) : new Color(252, 164, 28))
+                                    .addField(
+                                            "Uptime",
+                                            String.format(
+                                                    "%s hours %s minutes",
+                                                    hours,
+                                                    minutes
+                                            ),
+                                            true
+                                    )
+                                    .addField(
+                                            "Memory Used",
+                                            String.format(
+                                                    "%s / %s",
+                                                    ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576) + "MB",
+                                                    (Runtime.getRuntime().maxMemory() / 1048576) + "MB"
+                                            ),
+                                            true
+                                    )
+                                    .setFooter(bot.getName())
+                                    .setTimestamp(Instant.now()).build())
+                            .queue();
 
-                        EmbedBuilder eb = new EmbedBuilder()
-                                .setAuthor(bot.getName(), null, bot.getEffectiveAvatarUrl())
-                                .setTitle(":green_circle: Online")
-                                .setColor(!isCanary ? new Color(12, 60, 105) : new Color(252, 164, 28))
-                                .addField(
-                                        "Uptime",
-                                        String.format(
-                                                "%s hours %s minutes",
-                                                hours,
-                                                minutes
-                                        ),
-                                        true
-                                )
-                                .addField(
-                                        "Memory Used",
-                                        String.format(
-                                                "%s / %s",
-                                                ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576) + "MB",
-                                                (Runtime.getRuntime().maxMemory() / 1048576) + "MB"
-                                        ),
-                                        true
-                                )
-                                .setFooter(bot.getName())
-                                .setTimestamp(Instant.now());
+                }
 
-                        message.editMessage(
-                                " "
-                        ).flatMap(message1 -> message1.editMessageEmbeds(eb.build())).queue();
-
-                    }
-            );
-
-        };
+        );
         executorService.scheduleWithFixedDelay(task, 0, 1, TimeUnit.MINUTES);
     }
 

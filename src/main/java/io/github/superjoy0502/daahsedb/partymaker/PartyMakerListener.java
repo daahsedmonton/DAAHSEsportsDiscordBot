@@ -1,19 +1,15 @@
 package io.github.superjoy0502.daahsedb.partymaker;
 
 import io.github.superjoy0502.daahsedb.Game;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Button;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class PartyMakerListener extends ListenerAdapter {
 
@@ -53,21 +49,7 @@ public class PartyMakerListener extends ListenerAdapter {
 
                 event.deferEdit().queue();
 
-                String name = "LFG:" + partyMaker.uuid;
-                event.getGuild().createVoiceChannel(name, event.getGuild().getCategoryById(1023171418525024317L))
-                        .setUserlimit(partyMaker.count)
-                        .syncPermissionOverrides()
-                        .complete();
-
-                VoiceChannel voiceChannel = event.getGuild().getVoiceChannelsByName(name, false).get(0);
-
-                voiceChannel.createInvite().setMaxUses(1).setMaxAge(1L, TimeUnit.HOURS).flatMap(
-                        invite -> event.getHook().editOriginalComponents(ActionRow.of(Button.link(invite.getUrl(), "Join your session")))
-                ).queue();
-
-                event.getHook().editOriginal("Your LFG session has been created!").queue();
-
-                partyMaker.CreateSession(voiceChannel);
+                partyMaker.CreateSession(event);
 
             } else {
 

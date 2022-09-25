@@ -4,6 +4,7 @@ import io.github.superjoy0502.daahsedb.Game;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
@@ -19,19 +20,19 @@ import java.util.concurrent.TimeUnit;
 public class PartyMaker {
 
     public static ArrayList<PartyMaker> partyMakers = new ArrayList<>();
-    public TextChannel channel;
-    public VoiceChannel voiceChannel;
-    public JDA api;
-    public Guild guild;
     public UUID uuid;
     public Game game;
     public int count;
-    public User user;
     public boolean isChooseGameFieldFilled = false;
     public boolean isMemberCountFieldFilled = false;
-    String gameDisplay;
-    Emoji emoji;
-    long[] messageId = new long[1];
+    private JDA api;
+    private User user;
+    private Guild guild;
+    private TextChannel textChannel;
+    private VoiceChannel voiceChannel;
+    private String gameDisplay;
+    private Emoji emoji;
+    private final Message[] message = new Message[1];
 
     public PartyMaker() {
         uuid = UUID.randomUUID();
@@ -58,7 +59,7 @@ public class PartyMaker {
 
         user = event.getUser();
         guild = event.getGuild();
-        channel = guild.getTextChannelById(959019963325239346L);
+        textChannel = guild.getTextChannelById(959019963325239346L);
         api = event.getJDA();
 
         event.getHook().sendMessage(user.getAsMention() + "**'s LFG(Looking For Group) Builder**")
@@ -89,9 +90,25 @@ public class PartyMaker {
 
     }
 
-    public void CreateSession(VoiceChannel voiceChannel) {
+    public void CreateSession(ButtonClickEvent event) {
 
-        this.voiceChannel = voiceChannel;
+        String name = "LFG:" + uuid;
+        guild.createVoiceChannel(name, guild.getCategoryById(1023171418525024317L))
+                .setUserlimit(count)
+                .syncPermissionOverrides()
+                .complete();
+
+        voiceChannel = guild.getVoiceChannelsByName(name, false).get(0);
+        voiceChannel = guild.getVoiceChannelsByName(name, false).get(0);
+        String[] inviteURL = new String[1];
+
+        voiceChannel.createInvite().setMaxAge(1L, TimeUnit.HOURS).queue(
+                invite -> {
+                    inviteURL[0] = invite.getUrl();
+                    event.getHook().editOriginalComponents(ActionRow.of(Button.link(inviteURL[0], "Join your session"))).queue();
+                    event.getHook().editOriginal("Your LFG session has been created!").queue();
+                }
+        );
 
         switch (game) {
             case LEAGUE_OF_LEGENDS:
@@ -114,7 +131,7 @@ public class PartyMaker {
                 throw new IllegalStateException("Unexpected value: " + game);
         }
 
-        channel.sendMessageEmbeds(new EmbedBuilder()
+        textChannel.sendMessageEmbeds(new EmbedBuilder()
                 .setAuthor(user.getName(), null, user.getEffectiveAvatarUrl())
                 .setTitle(emoji.getAsMention() + " " + gameDisplay)
                 .setColor(new Color(12, 60, 105))
@@ -132,16 +149,25 @@ public class PartyMaker {
                 .setTimestamp(Instant.now())
                 .build()
         ).queue(message -> {
-            messageId[0] = message.getIdLong();
-            voiceChannel.createInvite().setMaxAge(1L, TimeUnit.DAYS).flatMap(invite -> message.editMessageComponents(ActionRow.of(Button.link(invite.getUrl(), "Join")))).queue();
+            this.message[0] = message;
+            message.editMessageComponents(ActionRow.of(Button.link(inviteURL[0], "Join"))).queue();
         });
 
     }
 
     public void UpdateSession() {
 
-        channel.retrieveMessageById(messageId[0])
-                .flatMap(message -> message.editMessageEmbeds(new EmbedBuilder()
+        if (voiceChannel.getMembers().size() == 0) {
+
+            message[0].delete().queue();
+            voiceChannel.delete().queue();
+            partyMakers.remove(this);
+
+            return;
+
+        }
+
+        message[0].editMessageEmbeds(new EmbedBuilder()
                         .setAuthor(user.getName(), null, user.getEffectiveAvatarUrl())
                         .setTitle(emoji.getAsMention() + " " + gameDisplay)
                         .setColor(new Color(12, 60, 105))
@@ -157,15 +183,8 @@ public class PartyMaker {
                         )
                         .setFooter(api.getSelfUser().getName())
                         .setTimestamp(Instant.now())
-                        .build())).queue();
-
-        if (voiceChannel.getMembers().size() == 0) {
-
-            channel.retrieveMessageById(messageId[0]).flatMap(Message::delete).queue();
-            voiceChannel.delete().queue();
-            PartyMaker.partyMakers.remove(this);
-
-        }
+                        .build())
+                .queue();
 
     }
 
