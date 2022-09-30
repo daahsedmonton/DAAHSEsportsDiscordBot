@@ -14,13 +14,18 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
 import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PartyMaker {
 
     public static ArrayList<PartyMaker> partyMakers = new ArrayList<>();
+    public static Map<VoiceChannel, PartyMaker> partyMakerChannels = new HashMap<>();
+    private final Message[] message = new Message[1];
     public UUID uuid;
+    public String title;
     public Game game;
     public int count;
     public boolean isChooseGameFieldFilled = false;
@@ -32,14 +37,19 @@ public class PartyMaker {
     private VoiceChannel voiceChannel;
     private String gameDisplay;
     private Emoji emoji;
-    private final Message[] message = new Message[1];
 
     public PartyMaker() {
         uuid = UUID.randomUUID();
         partyMakers.add(this);
     }
 
-    public static PartyMaker FindInstanceByUUID(UUID uuid) {
+    public PartyMaker(String title) {
+        uuid = UUID.randomUUID();
+        this.title = title;
+        partyMakers.add(this);
+    }
+
+    public static PartyMaker findInstanceByUUID(UUID uuid) {
 
         for (PartyMaker partyMaker : partyMakers) if (partyMaker.uuid.equals(uuid)) return partyMaker;
 
@@ -47,7 +57,7 @@ public class PartyMaker {
 
     }
 
-    public static PartyMaker FindInstanceByUser(User user) {
+    public static PartyMaker findInstanceByUser(User user) {
 
         for (PartyMaker partyMaker : partyMakers) if (partyMaker.user.equals(user)) return partyMaker;
 
@@ -55,7 +65,7 @@ public class PartyMaker {
 
     }
 
-    public void CreateForm(SlashCommandEvent event) {
+    public void createForm(SlashCommandEvent event) {
 
         user = event.getUser();
         guild = event.getGuild();
@@ -78,10 +88,13 @@ public class PartyMaker {
                 ).addActionRow(SelectionMenu.create("member-count:" + uuid)
                         .setPlaceholder("Set max count...")
                         .addOptions(
+                                SelectOption.of("2 Players", "2"),
                                 SelectOption.of("3 Players", "3"),
                                 SelectOption.of("4 Players", "4"),
                                 SelectOption.of("5 Players", "5"),
-                                SelectOption.of("6 Players", "6")
+                                SelectOption.of("6 Players", "6"),
+                                SelectOption.of("7 Players", "7"),
+                                SelectOption.of("8 Players", "8")
                         ).build()
                 ).addActionRow(
                         Button.primary("submit:" + uuid, "Submit"),
@@ -90,25 +103,7 @@ public class PartyMaker {
 
     }
 
-    public void CreateSession(ButtonClickEvent event) {
-
-        String name = "LFG:" + uuid;
-        guild.createVoiceChannel(name, guild.getCategoryById(1023171418525024317L))
-                .setUserlimit(count)
-                .syncPermissionOverrides()
-                .complete();
-
-        voiceChannel = guild.getVoiceChannelsByName(name, false).get(0);
-        voiceChannel = guild.getVoiceChannelsByName(name, false).get(0);
-        String[] inviteURL = new String[1];
-
-        voiceChannel.createInvite().setMaxAge(1L, TimeUnit.HOURS).queue(
-                invite -> {
-                    inviteURL[0] = invite.getUrl();
-                    event.getHook().editOriginalComponents(ActionRow.of(Button.link(inviteURL[0], "Join your session"))).queue();
-                    event.getHook().editOriginal("Your LFG session has been created!").queue();
-                }
-        );
+    public void createSession(ButtonClickEvent event) {
 
         switch (game) {
             case LEAGUE_OF_LEGENDS:
@@ -131,60 +126,65 @@ public class PartyMaker {
                 throw new IllegalStateException("Unexpected value: " + game);
         }
 
-        textChannel.sendMessageEmbeds(new EmbedBuilder()
-                .setAuthor(user.getName(), null, user.getEffectiveAvatarUrl())
-                .setTitle(emoji.getAsMention() + " " + gameDisplay)
-                .setColor(new Color(12, 60, 105))
-                .addField(
-                        "Made by",
-                        user.getAsMention(),
-                        true
-                )
-                .addField(
-                        "Members",
-                        voiceChannel.getMembers().size() + " / " + count,
-                        true
-                )
-                .setFooter(api.getSelfUser().getName())
-                .setTimestamp(Instant.now())
-                .build()
-        ).queue(message -> {
-            this.message[0] = message;
-            message.editMessageComponents(ActionRow.of(Button.link(inviteURL[0], "Join"))).queue();
-        });
+        String name = title != null ? title : user.getName() + "'s Party";
+        guild.createVoiceChannel(name, guild.getCategoryById(1023171418525024317L))
+                .setUserlimit(count)
+                .syncPermissionOverrides()
+                .queue(
+                        channel -> {
+                            this.voiceChannel = channel;
+                            partyMakerChannels.put(channel, this);
+                            EmbedBuilder embedBuilder = new EmbedBuilder();
+                            embedBuilder.setTitle(title != null ? title : user.getName() + "'s " + gameDisplay + " Party");
+                            embedBuilder.setDescription("This is a LFG party for " + emoji.getAsMention() + " " + gameDisplay);
+                            embedBuilder.addField("Game", gameDisplay, true);
+                            embedBuilder.addField("Member Count", voiceChannel.getMembers().size() + " / " + count, true);
+                            embedBuilder.addField("Host", user.getAsMention(), true);
+                            embedBuilder.setFooter("LFG Session ID: " + uuid);
+                            embedBuilder.setTimestamp(Instant.now());
+                            embedBuilder.setColor(Color.GREEN);
+                            voiceChannel.createInvite().setMaxAge(1L, TimeUnit.DAYS).queue(
+                                    invite -> {
+                                        event.getHook().editOriginalComponents(ActionRow.of(Button.link(invite.getUrl(), "Join your session"))).queue();
+                                        event.getHook().editOriginal("Your LFG party has been created!").queue();
+
+                                        textChannel.sendMessageEmbeds(embedBuilder.build())
+                                                .setActionRows(
+                                                        ActionRow.of(Button.link(invite.getUrl(), "Join"))
+                                                ).queue(
+                                                        message -> this.message[0] = message
+                                                );
+                                    }
+                            );
+                        }
+                );
 
     }
 
-    public void UpdateSession() {
+    public void updateSession() {
 
         if (voiceChannel.getMembers().size() == 0) {
 
             message[0].delete().queue();
             voiceChannel.delete().queue();
             partyMakers.remove(this);
+            partyMakerChannels.remove(this);
 
             return;
 
         }
 
-        message[0].editMessageEmbeds(new EmbedBuilder()
-                        .setAuthor(user.getName(), null, user.getEffectiveAvatarUrl())
-                        .setTitle(emoji.getAsMention() + " " + gameDisplay)
-                        .setColor(new Color(12, 60, 105))
-                        .addField(
-                                "Made by",
-                                user.getAsMention(),
-                                true
-                        )
-                        .addField(
-                                "Members",
-                                voiceChannel.getMembers().size() + " / " + count,
-                                true
-                        )
-                        .setFooter(api.getSelfUser().getName())
-                        .setTimestamp(Instant.now())
-                        .build())
-                .queue();
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle(title != null ? title : user.getName() + "'s " + gameDisplay + " Party");
+        embedBuilder.setDescription("This is a LFG party for " + emoji.getAsMention() + " " + gameDisplay);
+        embedBuilder.addField("Game", gameDisplay, true);
+        embedBuilder.addField("Member Count", voiceChannel.getMembers().size() + " / " + count, true);
+        embedBuilder.addField("Host", user.getAsMention(), true);
+        embedBuilder.setFooter("LFG Session ID: " + uuid);
+        embedBuilder.setTimestamp(Instant.now());
+        embedBuilder.setColor(Color.GREEN);
+
+        message[0].editMessageEmbeds(embedBuilder.build()).queue();
 
     }
 

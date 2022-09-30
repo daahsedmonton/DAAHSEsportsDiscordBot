@@ -33,14 +33,14 @@ public class Bot {
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 220945)"));
+        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 220950)"));
 
 //        SendRuleMessages(api, bot);
 
 
     }
 
-    private static void SendRuleMessages(JDA api, User bot) {
+    private static void sendRuleMessages(JDA api, User bot) {
         /*EmbedBuilder esb = new EmbedBuilder();
         esb.setTitle(":pushpin: DAAHS Esports Discord Server Rules v0.2.1");
         esb.setColor(new Color(12, 60, 105));

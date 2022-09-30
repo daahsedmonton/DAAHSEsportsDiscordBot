@@ -8,7 +8,7 @@ plugins {
 mainClassName = 'io.github.superjoy0502.daahsedb.Bot'
 
 group 'io.github.superjoy0502.daahsedb'
-version '2.0.1'
+version '2.0.2'
 def jdaVersion = '4.4.0_350'
 
 sourceCompatibility = targetCompatibility = 1.8

@@ -1,6 +1,7 @@
 package io.github.superjoy0502.daahsedb.partymaker;
 
 import io.github.superjoy0502.daahsedb.Game;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
@@ -14,7 +15,7 @@ import java.util.UUID;
 public class PartyMakerListener extends ListenerAdapter {
 
     @Override
-    public void onSelectionMenu(@NotNull SelectionMenuEvent event) {
+    public void onSelectionMenu(@NotNull SelectionMenuEvent event) { // Handle selection menu events
 
         event.deferEdit().queue();
 
@@ -22,7 +23,7 @@ public class PartyMakerListener extends ListenerAdapter {
         String[] splitComponentId = componentId.split(":");
         String id = splitComponentId[0];
         UUID uuid = UUID.fromString(splitComponentId[1]);
-        PartyMaker partyMaker = PartyMaker.FindInstanceByUUID(uuid);
+        PartyMaker partyMaker = PartyMaker.findInstanceByUUID(uuid);
 
         if (id.equals("choose-game")) {
             partyMaker.game = Game.valueOf(event.getValues().get(0));
@@ -35,13 +36,13 @@ public class PartyMakerListener extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonClick(@NotNull ButtonClickEvent event) {
+    public void onButtonClick(@NotNull ButtonClickEvent event) { // Handle button click events
 
         String componentId = event.getComponentId();
         String[] splitComponentId = componentId.split(":");
         String id = splitComponentId[0];
         UUID uuid = UUID.fromString(splitComponentId[1]);
-        PartyMaker partyMaker = PartyMaker.FindInstanceByUUID(uuid);
+        PartyMaker partyMaker = PartyMaker.findInstanceByUUID(uuid);
 
         if (id.equals("submit")) {
 
@@ -49,7 +50,7 @@ public class PartyMakerListener extends ListenerAdapter {
 
                 event.deferEdit().queue();
 
-                partyMaker.CreateSession(event);
+                partyMaker.createSession(event);
 
             } else {
 
@@ -63,7 +64,7 @@ public class PartyMakerListener extends ListenerAdapter {
 
             event.deferEdit().queue();
 
-            event.getHook().editOriginal("This LFG session has been canceled.").queue();
+            event.getHook().editOriginal("This LFG party has been canceled.").queue();
             event.getHook().editOriginalComponents().queue();
             PartyMaker.partyMakers.remove(partyMaker);
 
@@ -73,32 +74,23 @@ public class PartyMakerListener extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        String channelName = event.getChannelJoined().getName();
-        String[] channelNameSplit = channelName.split(":");
-        if (!channelNameSplit[0].equals("LFG")) return;
-        UUID uuid = UUID.fromString(channelNameSplit[1]);
-        PartyMaker partyMaker = PartyMaker.FindInstanceByUUID(uuid);
-        partyMaker.UpdateSession();
+        VoiceChannel channel = event.getChannelJoined();
+        if (!PartyMaker.partyMakerChannels.containsKey(channel)) return;
+        PartyMaker.partyMakerChannels.get(channel).updateSession();
     }
 
     @Override
     public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-        String channelName = event.getChannelLeft().getName();
-        String[] channelNameSplit = channelName.split(":");
-        if (!channelNameSplit[0].equals("LFG")) return;
-        UUID uuid = UUID.fromString(channelNameSplit[1]);
-        PartyMaker partyMaker = PartyMaker.FindInstanceByUUID(uuid);
-        partyMaker.UpdateSession();
+        VoiceChannel channel = event.getChannelLeft();
+        if (!PartyMaker.partyMakerChannels.containsKey(channel)) return;
+        PartyMaker.partyMakerChannels.get(channel).updateSession();
     }
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        String channelName = event.getChannelLeft().getName();
-        String[] channelNameSplit = channelName.split(":");
-        if (!channelNameSplit[0].equals("LFG")) return;
-        UUID uuid = UUID.fromString(channelNameSplit[1]);
-        PartyMaker partyMaker = PartyMaker.FindInstanceByUUID(uuid);
-        partyMaker.UpdateSession();
+        VoiceChannel channel = event.getChannelLeft();
+        if (!PartyMaker.partyMakerChannels.containsKey(channel)) return;
+        PartyMaker.partyMakerChannels.get(channel).updateSession();
     }
 
 }
