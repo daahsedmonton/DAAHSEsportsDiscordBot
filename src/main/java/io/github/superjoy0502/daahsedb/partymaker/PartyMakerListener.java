@@ -25,6 +25,12 @@ public class PartyMakerListener extends ListenerAdapter {
         UUID uuid = UUID.fromString(splitComponentId[1]);
         PartyMaker partyMaker = PartyMaker.findInstanceByUUID(uuid);
 
+        if (partyMaker == null) {
+            event.getHook().editOriginal("This LFG form is invalid.").queue();
+            event.getHook().editOriginalComponents().queue();
+            return;
+        }
+
         if (id.equals("choose-game")) {
             partyMaker.game = Game.valueOf(event.getValues().get(0));
             partyMaker.isChooseGameFieldFilled = true;
@@ -43,6 +49,13 @@ public class PartyMakerListener extends ListenerAdapter {
         String id = splitComponentId[0];
         UUID uuid = UUID.fromString(splitComponentId[1]);
         PartyMaker partyMaker = PartyMaker.findInstanceByUUID(uuid);
+
+        if (partyMaker == null) {
+            event.deferEdit().queue();
+            event.getHook().editOriginal("This LFG form is invalid.").queue();
+            event.getHook().editOriginalComponents().queue();
+            return;
+        }
 
         if (id.equals("submit")) {
 
@@ -64,9 +77,7 @@ public class PartyMakerListener extends ListenerAdapter {
 
             event.deferEdit().queue();
 
-            event.getHook().editOriginal("This LFG party has been canceled.").queue();
-            event.getHook().editOriginalComponents().queue();
-            PartyMaker.partyMakers.remove(partyMaker);
+            partyMaker.cancel(event);
 
         }
 

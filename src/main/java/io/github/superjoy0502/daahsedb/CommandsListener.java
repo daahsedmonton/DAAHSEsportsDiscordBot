@@ -31,7 +31,7 @@ class CommandsListener extends ListenerAdapter {
 
                 if (PartyMaker.findInstanceByUser(event.getUser()) != null) {
                     // Check if the user already has a PartyMaker instance
-                    event.reply("You already have an existing LFG session!").setEphemeral(true).queue();
+                    event.reply("You already have an existing LFG session! Use `/lfg cancel` if you think this is an error.").setEphemeral(true).queue();
                     return;
                 }
 
@@ -47,6 +47,19 @@ class CommandsListener extends ListenerAdapter {
                 event.deferReply(true).queue(); // Defer the reply
 
                 partyMaker.createForm(event); // Create the form
+
+            } else if (event.getSubcommandName().equals("cancel")) {
+
+                PartyMaker partyMaker = PartyMaker.findInstanceByUser(event.getUser());
+
+                if (partyMaker == null) {
+                    event.reply("You don't have an existing LFG session!").setEphemeral(true).queue();
+                    return;
+                }
+
+                event.deferReply(true).queue(); // Defer the reply
+
+                partyMaker.cancel(event);
 
             }
 
