@@ -145,7 +145,7 @@ public class PartyMaker {
                             embedBuilder.setColor(new Color(12, 60, 105));
                             this.voiceChannel.createInvite().setMaxAge(1L, TimeUnit.DAYS).queue(
                                     invite -> {
-                                        event.getHook().editOriginalComponents(ActionRow.of(Button.link(invite.getUrl(), "Join your session"))).queue();
+                                        event.getHook().editOriginalComponents(ActionRow.of(Button.link(invite.getUrl(), "Join your party"))).queue();
                                         event.getHook().editOriginal("Your LFG party has been created!").queue();
 
                                         textChannel.sendMessageEmbeds(embedBuilder.build())
