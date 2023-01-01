@@ -203,7 +203,7 @@ public class Verification extends ListenerAdapter {
 
         long id = event.getUser().getIdLong();
 
-        if (eventMessageId == welcomeMessageIdMap.get(id) && verificationAgreedMap.get(id) == false) {
+        if (eventMessageId == welcomeMessageIdMap.get(id) && !verificationAgreedMap.get(id)) {
 
             if (reactionCodepoints.equals(checkmark)) {
 
@@ -212,7 +212,7 @@ public class Verification extends ListenerAdapter {
 
             }
 
-        } else if (eventMessageId == confirmMessageIdMap.get(id) && confirmedMap.get(id) == false) {
+        } else if (eventMessageId == confirmMessageIdMap.get(id) && !confirmedMap.get(id)) {
 
             if (reactionCodepoints.equalsIgnoreCase(checkmark)) {
 

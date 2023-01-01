@@ -1,6 +1,9 @@
 package io.github.superjoy0502.daahsedb;
 
+import io.github.superjoy0502.daahsedb.commands.Commands;
+import io.github.superjoy0502.daahsedb.commands.CommandsListener;
 import io.github.superjoy0502.daahsedb.partymaker.PartyMakerListener;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -8,20 +11,27 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
+import java.awt.*;
+import java.util.Objects;
+
 public class Bot {
 
     public static void main(String[] arguments) throws Exception {
 
-        boolean isCanary = false;
+        boolean isCanary = true;
         long startTime = System.nanoTime();
         String envVar;
         envVar = isCanary ? "DAAHSEDBCKey" : "DAAHSEDBKey";
 
         JDA api = JDABuilder.createDefault(System.getenv(envVar))
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                .enableIntents(GatewayIntent.GUILD_MESSAGES)
-                .addEventListeners(new CommandsListener(),
+                .enableIntents(
+                        GatewayIntent.GUILD_MEMBERS,
+                        GatewayIntent.GUILD_MESSAGES,
+                        GatewayIntent.DIRECT_MESSAGES)
+                .addEventListeners(
+                        new CommandsListener(),
                         new PartyMakerListener())
+                .setActivity(Activity.playing("in Ionia (Patch 221020)"))
                 .build()
                 .awaitReady();
 
@@ -33,23 +43,22 @@ public class Bot {
         UpdateStatus.setVariables(isCanary, startTime, api, bot);
         UpdateStatus.updateStatusOnline();
 
-        api.getPresence().setActivity(Activity.playing("in Ionia (Patch 221010)"));
-
 //        SendRuleMessages(api, bot);
 
 
     }
 
     private static void sendRuleMessages(JDA api, User bot) {
-        /*EmbedBuilder esb = new EmbedBuilder();
-        esb.setTitle(":pushpin: DAAHS Esports Discord Server Rules v0.2.1");
+        EmbedBuilder esb = new EmbedBuilder();
+        esb.setTitle(":pushpin: DAAHS Esports Discord Server Rules");
         esb.setColor(new Color(12, 60, 105));
-        esb.setDescription("• The following rules define the rules of DAAHS Esports Discord Server.\n" +
+        esb.setDescription(
+                "• The following rules define the rules of DAAHS Esports Discord Server.\n" +
                 "• These rules must be followed strictly, or else penalties may apply.\n" +
-                "• Please change your nickname to your real name.\n" +
-                "• The maximum rating permitted in messages is **G**.");
+                "• Please change and keep your name as \"First Name Last Name [EPSB id]\"" +
+                "• Ex) Joy Kim [d.kim52] or Daksh Raval [d.raval]");
 
-        api.getTextChannelById(902691576105553964L).sendMessage(
+        Objects.requireNonNull(api.getTextChannelById(902691576105553964L)).sendMessage(
                 esb.build()
         ).queue();
 
@@ -106,7 +115,7 @@ public class Bot {
 
         api.getTextChannelById(902691576105553964L).sendMessage(
                 esb5.build()
-        ).queue();*/
+        ).queue();
     }
 
 }
